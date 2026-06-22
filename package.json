@@ -1,0 +1,13 @@
+{
+  "name": "helloword",
+  "private": true,
+  "version": "1.0.0",
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run front\" \"npm run back\"",
+    "front": "cd frontend && npm run dev",
+    "back": "cd backend && npm run dev"
+  }
+}
