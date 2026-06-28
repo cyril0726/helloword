@@ -13,10 +13,18 @@ export default {
       )
     }
 
-    if (pathname === "/") {
+/*    if (pathname === "/") {
       return new Response("Worker API running 🚀")
     }
+*/
 
+if (pathname === "/") {
+  return new Response("TEST ROOT", {
+    headers: {
+      "Content-Type": "text/plain"
+    }
+  })
+}
     return new Response("Not found", { status: 404 })
   },
 }
