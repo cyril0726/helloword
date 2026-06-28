@@ -1,31 +1,25 @@
 export default {
   async fetch(request: Request) {
-    const { pathname } = new URL(request.url)
+    const url = new URL(request.url)
 
-    if (pathname === "/api/hello") {
+    // normalisation robuste
+    const pathname = url.pathname.replace(/\/+$/, '')
+
+    if (pathname === '/api/hello') {
       return Response.json(
-        { message: "Hello World depuis Cloudflare Workers" },
+        { message: 'Hello World depuis Cloudflare Workers' },
         {
           headers: {
-            "Access-Control-Allow-Origin": "*",
-          },
+            'Access-Control-Allow-Origin': '*'
+          }
         }
       )
     }
 
-/*    if (pathname === "/") {
+    if (pathname === '' || pathname === '/') {
       return new Response("Worker API running 🚀")
     }
-*/
 
-if (pathname === "/") {
-  return new Response("TEST ROOT", {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8"
-    }
-  })
-}
-
-    return new Response("Not found", { status: 404 })
-  },
+    return new Response('Not found', { status: 404 })
+  }
 }
