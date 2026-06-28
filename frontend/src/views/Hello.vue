@@ -16,7 +16,7 @@ const loading = ref(true)
 const API =
   import.meta.env.MODE === 'development'
     ? ''
-    : 'https://helloword-api.workers.dev'
+    : 'https://helloword-api.cyrilgourdon-cg.workers.dev'
 
 onMounted(async () => {
   try {
