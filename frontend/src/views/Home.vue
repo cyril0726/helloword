@@ -11,15 +11,21 @@ import { ref, onMounted } from 'vue'
 const message = ref('')
 const loading = ref(true)
 
+const API = 'https://helloword-api.cyrilgourdon-cg.workers.dev'
+
 onMounted(async () => {
   try {
-    const res = await fetch('http://127.0.0.1:8787/api/hello')
-    const data = await res.json()
+    const res = await fetch(`${API}/api/hello`)
 
+    if (!res.ok) {
+      throw new Error(`HTTP error ${res.status}`)
+    }
+
+    const data = await res.json()
     message.value = data.message
   } catch (err) {
-    message.value = 'Erreur API'
     console.error(err)
+    message.value = 'Erreur API'
   } finally {
     loading.value = false
   }

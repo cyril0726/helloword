@@ -1,16 +1,33 @@
 <template>
   <h1>Hello API</h1>
-  <p>{{ message }}</p>
+
+  <p v-if="loading">Chargement...</p>
+  <p v-else>{{ message }}</p>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 
-const message = ref('Chargement...')
+const message = ref('')
+const loading = ref(true)
+
+const API = 'https://helloword-api.cyrilgourdon-cg.workers.dev'
 
 onMounted(async () => {
-  const res = await fetch('/api/hello')
-  const data = await res.json()
-  message.value = data.message
+  try {
+    const res = await fetch(`${API}/api/hello`)
+
+    if (!res.ok) {
+      throw new Error(`HTTP error ${res.status}`)
+    }
+
+    const data = await res.json()
+    message.value = data.message
+  } catch (err) {
+    console.error(err)
+    message.value = 'Erreur API'
+  } finally {
+    loading.value = false
+  }
 })
 </script>
