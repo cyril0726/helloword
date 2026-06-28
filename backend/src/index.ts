@@ -21,10 +21,11 @@ export default {
 if (pathname === "/") {
   return new Response("TEST ROOT", {
     headers: {
-      "Content-Type": "text/plain"
+      "Content-Type": "text/plain; charset=utf-8"
     }
   })
 }
+
     return new Response("Not found", { status: 404 })
   },
 }
