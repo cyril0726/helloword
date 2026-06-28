@@ -7,7 +7,7 @@ export default {
 
     if (pathname === '/api/hello') {
       return Response.json(
-        { message: 'Hello World depuis Cloudflare Workers' },
+        { message: 'Hello World depuis Cloudflare Workers 🚀🚀🚀' },
         {
           headers: {
             'Access-Control-Allow-Origin': '*'
@@ -17,7 +17,7 @@ export default {
     }
 
     if (pathname === '' || pathname === '/') {
-      return new Response("Worker API running 🚀")
+      return new Response("Worker API running 🚀🚀🚀")
     }
 
     return new Response(JSON.stringify({
