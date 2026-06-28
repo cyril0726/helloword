@@ -1,5 +1,5 @@
 <template>
-  <h1>API Test :</h1>
+  <h1>API Test ::</h1>
 
   <p v-if="loading">loading...</p>
   <p v-else>{{ message }}</p>
