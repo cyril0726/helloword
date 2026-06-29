@@ -23,6 +23,11 @@ app.get("/api/hello", (c) => {
   return c.json({ message: "Hello World 🚀" });
 });
 
+app.get("/", (c) => {
+  return c.json({ message: "Root API OK 🚀" });
+});
+
+
 app.get("/api/messages", async (c) => {
   const { results } = await c.env.DB
     .prepare("SELECT * FROM messages ORDER BY created_at DESC")
