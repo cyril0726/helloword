@@ -5,9 +5,13 @@
   "devDependencies": {
     "concurrently": "^10.0.3"
   },
-  "scripts": {
-    "dev": "concurrently \"npm run dev:front\" \"npm run dev:back\"",
-    "dev:front": "cd frontend && npm run dev",
-    "dev:back": "cd backend && npx wrangler dev"
-  }
+"scripts": {
+  "dev": "npm run dev:all",
+  "dev:all": "concurrently \"npm run dev:front\" \"npm run dev:back\"",
+  "dev:front": "cd frontend && npm run dev",
+  "dev:back": "cd backend && npx wrangler dev",
+
+  "db:init": "cd backend && npx wrangler d1 migrations apply DB --local",
+  "init": "npm run db:init"
+}
 }
