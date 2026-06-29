@@ -25,6 +25,7 @@ const message = ref('')
 
 const API = import.meta.env.VITE_API_URL
 console.log("API URL =", API)
+console.log("PROD API =", import.meta.env.VITE_API_URL)
 
 async function checkAPI() {
   state.value = 'loading'
