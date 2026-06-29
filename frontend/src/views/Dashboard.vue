@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1>🧭 System Dashboard</h1>
+    <h1>🧭 System Dashboard 🧭</h1>
 
     <div class="grid">
       <ApiStatus />
