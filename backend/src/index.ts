@@ -1,10 +1,23 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 
 type Env = {
   DB: D1Database;
 };
 
 const app = new Hono<{ Bindings: Env }>();
+
+// ✅ CORS middleware officiel Hono
+app.use(
+  "*",
+  cors({
+    origin: "*",
+    allowMethods: ["GET", "POST", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type"],
+  })
+);
+
+// --- ROUTES ---
 
 app.get("/api/hello", (c) => {
   return c.json({ message: "Hello World 🚀" });

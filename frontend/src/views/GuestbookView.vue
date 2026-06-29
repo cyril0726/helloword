@@ -34,17 +34,20 @@ type Message = {
 };
 
 const messages = ref<Message[]>([]);
+const API =
+  import.meta.env.VITE_API_URL ||
+  "http://127.0.0.1:8787";
 const text = ref("");
 
 async function loadMessages() {
-  const res = await fetch("/api/messages");
+  const res = await fetch(`${API}/api/messages`);
   messages.value = await res.json();
 }
 
 async function sendMessage() {
   if (!text.value) return;
 
-  await fetch("/api/messages", {
+  await fetch(`${API}/api/messages`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -58,10 +61,9 @@ async function sendMessage() {
 
 async function clearMessages() {
   const ok = confirm("Supprimer tous les messages ?");
-
   if (!ok) return;
 
-  await fetch("/api/messages", {
+  await fetch(`${API}/api/messages`, {
     method: "DELETE"
   });
 

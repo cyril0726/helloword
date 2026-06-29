@@ -6,8 +6,8 @@
     "concurrently": "^10.0.3"
   },
   "scripts": {
-    "dev": "concurrently \"npm run front\" \"npm run back\"",
-    "front": "cd frontend && npm run dev",
-    "back": "cd backend && npm run dev"
+    "dev": "concurrently \"npm run dev:front\" \"npm run dev:back\"",
+    "dev:front": "cd frontend && npm run dev",
+    "dev:back": "cd backend && npx wrangler dev"
   }
 }
