@@ -2,10 +2,12 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import Home from '../views/Home.vue'
 import About from '../views/About.vue'
+import guestbook from '../views/GuestbookView.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', component: Home },
-  { path: '/about', component: About }
+  { path: '/about', component: About },
+  { path: '/guestbook', name: 'guestbook',  component: guestbook }
 ]
 
 const router = createRouter({

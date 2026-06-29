@@ -1,30 +1,40 @@
-export default {
-  async fetch(request: Request) {
-    const url = new URL(request.url)
+import { Hono } from "hono";
 
-    // normalisation robuste
-    const pathname = url.pathname.replace(/\/+$/, '')
+type Env = {
+  DB: D1Database;
+};
 
-    if (pathname === '/api/hello') {
-      return Response.json(
-        { message: 'Hello World depuis Cloudflare Workers 🚀🚀🚀' },
-        {
-          headers: {
-            'Access-Control-Allow-Origin': '*'
-          }
-        }
-      )
-    }
+const app = new Hono<{ Bindings: Env }>();
 
-    if (pathname === '' || pathname === '/') {
-      return new Response("Worker API running 🚀🚀🚀")
-    }
+app.get("/api/hello", (c) => {
+  return c.json({ message: "Hello World 🚀" });
+});
 
-    return new Response(JSON.stringify({
-  pathname: url.pathname,
-  url: request.url
-  }), {
-    headers: { 'Content-Type': 'application/json' }
-  })
-  }
-}
+app.get("/api/messages", async (c) => {
+  const { results } = await c.env.DB
+    .prepare("SELECT * FROM messages ORDER BY created_at DESC")
+    .all();
+
+  return c.json(results);
+});
+
+app.post("/api/messages", async (c) => {
+  const body = await c.req.json();
+
+  await c.env.DB
+    .prepare("INSERT INTO messages (text) VALUES (?)")
+    .bind(body.text)
+    .run();
+
+  return c.json({ success: true });
+});
+
+app.delete("/api/messages", async (c) => {
+  await c.env.DB
+    .prepare("DELETE FROM messages")
+    .run();
+
+  return c.json({ success: true });
+});
+
+export default app;

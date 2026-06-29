@@ -13,6 +13,13 @@
 	"upload_source_maps": true,
 	"compatibility_flags": [
 		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "helloword-db",
+			"database_id": "c7c2ae3a-173f-4f81-bf19-02c5dedb9688"
+		}
 	]
 	/**
 	 * Smart Placement
