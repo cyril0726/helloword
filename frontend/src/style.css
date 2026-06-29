@@ -30,6 +30,14 @@
   }
 }
 
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0a0a0a;
+  font-family: monospace;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #9ca3af;
