@@ -3,7 +3,11 @@
     <Navbar />
 
     <main class="content">
-      <slot />
+      <RouterView v-slot="{ Component }">
+        <Transition name="page" mode="out-in">
+          <component :is="Component" />
+        </Transition>
+      </RouterView>
     </main>
 
     <Footer />
@@ -11,9 +15,11 @@
 </template>
 
 <script setup lang="ts">
+import { RouterView } from 'vue-router'
 import Navbar from '@/components/layout/Navbar.vue'
 import Footer from '@/components/layout/Footer.vue'
 </script>
+
 
 <style>
 .public-layout {
