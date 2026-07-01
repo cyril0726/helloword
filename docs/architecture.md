@@ -2,44 +2,78 @@
 
 ## Overview
 
-HelloWord is a full-stack web application composed of:
+HelloWord is a full-stack interactive web lab built with Vue 3 and Cloudflare Workers.
 
-- Frontend: Vue 3 SPA
-- Backend: Cloudflare Workers API
-- Database: Cloudflare D1
+The project focuses on building a **modular UI system** and interactive experiments (mini-games, tools, prototypes).
 
-It is split into two main parts:
+---
 
-1. Public application (portfolio + lab)
-2. Admin dashboard (internal tools)
+## 🧭 System Design
+
+The project is structured around 3 core layers:
+
+1. **UI Layer (Frontend)**
+   - Vue 3 SPA
+   - Component-based architecture
+   - Design system (cards, buttons, layout rules)
+
+2. **API Layer (Backend)**
+   - Cloudflare Workers
+   - Hono framework
+   - Simple REST API
+
+3. **Data Layer**
+   - Cloudflare D1 (SQLite-like)
+   - Used for experiments (messages / test data)
 
 ---
 
 ## 🖥️ Frontend (Vue 3)
 
 ### Stack
-- Vue 3 + Vite
+- Vue 3
+- Vite
 - Vue Router
 - TypeScript
 
-### Structure
+### Architecture Style
 
-- `/views` → pages (Home, Projects, Lab, Dashboard)
+The frontend is now organized as a **product UI system**:
+
+- `/views` → pages (Home, Lab, About)
 - `/components` → reusable UI components
-- `/layouts` → layout system (Public / Dashboard)
+- `/styles` → design system (global CSS)
 - `/router` → route definitions
 
-### Layouts
+---
 
-#### Public Layout
-- Navbar
-- Content
-- Footer
+## 🎨 UI / Design System
 
-#### Dashboard Layout
-- Sidebar
-- Topbar
-- Content area
+The project uses a lightweight custom design system:
+
+### Core primitives
+- `.page` → layout container
+- `.card` → reusable UI block
+- `.btn` → action elements
+- `.is-hoverable` → interactive state modifier
+
+### Design philosophy
+- consistency over per-page styling
+- reusable UI components
+- minimal but scalable system
+
+---
+
+## 🧪 Lab System
+
+The Lab is the core of the project.
+
+It is a grid-based system of interactive cards:
+
+- each card represents an experiment
+- states: `wip` / `live`
+- click-based navigation
+- modular components (LabCard, ExplorerGrid)
 
 ---
 
@@ -49,10 +83,14 @@ It is split into two main parts:
 - Cloudflare Workers
 - Hono framework
 
-### Responsibilities
-- REST API
-- Data access layer (D1)
-- System endpoints
+### Role
+The backend is currently a lightweight API layer used for:
+
+- testing endpoints
+- storing experimental data
+- supporting future features (lab interactions)
+
+---
 
 ### API endpoints
 
@@ -73,11 +111,10 @@ DELETE /api/messages
 id INTEGER PRIMARY KEY AUTOINCREMENT
 text TEXT NOT NULL
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-
-Used for:
-
-guestbook feature
-test write/read operations
+Usage
+guestbook experiment
+API testing layer
+data flow validation
 🔌 Data Flow
 
 Frontend → API → D1
@@ -87,16 +124,25 @@ Example:
 Vue component calls /api/messages
 Worker handles request via Hono
 D1 returns data
-Vue updates UI
+UI updates reactively
+
 🚀 Deployment
 Frontend
 Cloudflare Pages
-Build injected with VITE_API_URL
+Vite build system
 Backend
 Cloudflare Workers
-Deployed via Wrangler
-🧠 Key design decisions
+Wrangler deployment
+
+🧠 Key Design Decisions
 SPA architecture for simplicity
-Separation of public vs admin UI
-API-first backend design
+Component-first UI design
+Design system instead of page-specific styling
+Lab-first mindset (experiments over content)
 Cloudflare-native stack for edge performance
+
+📌 Current Status
+UI System: ✅ in progress (stable v1)
+Lab system: ⚙️ active development
+Backend API: ⚙️ experimental but stable
+Admin dashboard: ❌ not implemented (removed from current scope)

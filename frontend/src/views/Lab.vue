@@ -1,5 +1,5 @@
 <template>
-  <section class="lab">
+  <section class="lab page">
 
     <h2>Explorer le laboratoire</h2>
 

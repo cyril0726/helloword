@@ -1,5 +1,5 @@
 <template>
-  <section class="hero">
+  <section class="hero page">
 
     <span class="eyebrow">LAB • EXPÉRIMENTAL</span>
 
@@ -14,7 +14,7 @@
     </p>
 
     <div class="actions">
-      <RouterLink to="/lab" class="primary">
+      <RouterLink to="/lab" class="btn btn--primary">
         Explorer le laboratoire
       </RouterLink>
     </div>
@@ -50,25 +50,4 @@ p {
   margin-bottom: 24px;
 }
 
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.primary {
-  padding: 10px 14px;
-  background: #111827;
-  border: 1px solid #333;
-  color: white;
-  text-decoration: none;
-
-  border-radius: 8px;
-  transition: 0.15s;
-}
-
-.primary:hover {
-  transform: translateY(-1px);
-  border-color: #444;
-}
 </style>

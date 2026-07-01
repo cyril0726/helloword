@@ -1,86 +1,66 @@
 <template>
-  <section class="about">
+<section class="about page">
 
-    <!-- LEFT -->
-    <div class="about__left">
+  <div class="card about-card">
+
+    <div class="about-header">
       <div class="avatar">🧑‍🚀</div>
-    </div>
 
-    <!-- RIGHT -->
-    <div class="about__content">
-
-      <h2>À propos de HelloWord</h2>
-
-      <p>
-        HelloWord est un laboratoire personnel de création numérique :
-        jeux, interfaces et expériences interactives.
-      </p>
-
-      <p>
-        Objectif : tester, apprendre et construire des projets concrets
-        autour du web interactif et du game design.
-      </p>
-
-      <div class="stats">
-        <div class="stat">
-          <strong>10+</strong>
-          <span>Projets</span>
-        </div>
-
-        <div class="stat">
-          <strong>4+</strong>
-          <span>Jeux</span>
-        </div>
-
-        <div class="stat">
-          <strong>∞</strong>
-          <span>Expériences</span>
-        </div>
+      <div>
+        <h2>HelloWord Lab</h2>
+        <span class="tag">Web • Games • Experiments</span>
       </div>
-
     </div>
 
-  </section>
+    <p>
+      HelloWord est un laboratoire personnel de création numérique dédié aux interfaces interactives et aux expériences web.
+    </p>
+
+    <p>
+      Objectif : construire, tester et itérer sur des idées de jeux, d’outils et de micro-expériences.
+    </p>
+
+    <div class="stats">
+      <div><strong>10+</strong><span>Projets</span></div>
+      <div><strong>4+</strong><span>Jeux</span></div>
+      <div><strong>∞</strong><span>Expériences</span></div>
+    </div>
+  </div>
+
+</section>
 </template>
 
+<script setup>
+import { RouterLink } from 'vue-router'
+</script>
+
 <style>
-.about {
-  display: flex;
-  gap: 40px;
-  padding: 48px 24px;
-  max-width: 900px;
+.about-card {
+  max-width: 800px;
   margin: 0 auto;
 }
 
-.about__left {
-  min-width: 160px;
+.about-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .avatar {
-  font-size: 40px;
-  margin-bottom: 12px;
+  font-size: 42px;
 }
 
-.badge {
+.tag {
   font-size: 11px;
+  color: #666;
+}
+
+.about-card p {
   color: #777;
-}
-
-.about__content h2 {
-  font-size: 20px;
-  margin-bottom: 12px;
-}
-
-.about__content p {
   font-size: 14px;
-  color: #777;
   line-height: 1.6;
-  margin-bottom: 12px;
-}
-
-.support a {
-  color: #aaa;
-  text-decoration: underline;
+  margin-bottom: 10px;
 }
 
 .stats {
@@ -89,12 +69,12 @@
   margin-top: 20px;
 }
 
-.stat strong {
+.stats strong {
   display: block;
-  font-size: 16px;
+  color: white;
 }
 
-.stat span {
+.stats span {
   font-size: 11px;
   color: #777;
 }

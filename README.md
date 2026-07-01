@@ -1,6 +1,6 @@
 # 🚀 HelloWord
 
-Full-stack web project: portfolio + lab + admin dashboard.
+Full-stack web project: interactive web lab + portfolio system + backend API.
 
 Built with Vue 3 frontend and Cloudflare Workers backend.
 
@@ -8,10 +8,13 @@ Built with Vue 3 frontend and Cloudflare Workers backend.
 
 ## 🧭 Vision
 
-HelloWord is a hybrid project combining:
-- A public portfolio (projects, lab, experiments)
-- A developer lab (mini web games / experiences)
-- An internal admin dashboard (system monitoring + tools)
+HelloWord is a personal interactive web lab focused on building:
+- experiments
+- mini-games
+- UI prototypes
+- developer tools
+
+It is not a traditional portfolio, but a **living product lab**.
 
 ---
 
@@ -38,25 +41,38 @@ HelloWord is a hybrid project combining:
 
 ## 📦 Structure
 
-
-/frontend → Vue application (public + admin UI)
+/frontend → Vue application (public UI + lab + pages)
 /backend → API (Hono + Workers)
 /docs → Project documentation
-
 
 ---
 
 ## 🚀 Features
 
-### Public site
-- Home page
-- Projects showcase
-- Lab (experiments / mini-games)
+### Public interface
+- Landing page (product-style entry point)
+- Lab (interactive grid of experiments)
+- About (product identity card)
 
-### Admin dashboard
-- API health monitoring
-- Database test (guestbook)
-- System status panel
+### Lab system
+- Interactive cards system
+- WIP / Live states
+- Click-based navigation
+- Component-based UI architecture
+
+---
+
+## 🎨 UI / Design System
+
+This project now includes a lightweight design system:
+
+- `.page` → global layout container
+- `.card` → reusable UI container
+- `.btn` → unified buttons
+- `.is-hoverable` → interactive states
+
+Design philosophy:
+> consistency over page-specific styling
 
 ---
 
@@ -64,9 +80,9 @@ HelloWord is a hybrid project combining:
 
 Backend exposed under:
 
-```
+
 /api/*
-```
+
 
 Examples:
 - GET `/api/hello`
@@ -79,28 +95,24 @@ Examples:
 
 ```bash
 npm run dev
-```
 
 Runs:
-- Frontend (Vite)
-- Backend (Wrangler)
-- Local environment
 
----
-
-## 📌 Status
+Frontend (Vite)
+Backend (Wrangler)
+Local environment
+📌 Status
 
 Project is currently in active development:
-- Architecture: ✅
-- Routing: ✅
-- Layouts: ✅
-- Dashboard: ⚠️ in progress
-- Design system: ❌ not started
 
----
+Architecture: ✅
+Routing: ✅
+UI system: ⚙️ in progress (design system v1)
+Lab system: ⚙️ in progress (WIP cards)
+Backend API: ✅ stable
+📚 Documentation
 
-## 📚 Documentation
+See /docs:
 
-See `/docs`:
-- [Architecture](./docs/architecture.md)
-- [Roadmap](./docs/roadmap.md)
+Architecture
+Roadmap

@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card is-hoverable" @click="handleClick">
 
     <span v-if="item && item.tag" class="badge">
       {{ item.tag }}
@@ -22,16 +22,6 @@ defineProps({
 </script>
 
 <style>
-.card {
-  position: relative;
-  padding: 16px;
-
-  border: 1px solid #222;
-  background: #0f0f0f;
-
-  color: white;
-}
-
 .icon {
   font-size: 20px;
 }

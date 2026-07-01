@@ -1,0 +1,47 @@
+/*CARD SYSTEM*/
+.card {
+  background: #0f0f0f;
+  border: 1px solid #222;
+  border-radius: 12px;
+
+  padding: 16px;
+  transition: 0.15s ease;
+  position: relative;
+  color: white;
+}
+
+/* uniquement si la card est interactive */
+.card.is-hoverable:hover {
+  transform: translateY(-2px);
+  border-color: #333;
+}
+
+/*BUTTON SYSTEM*/
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 10px 14px;
+  border-radius: 8px;
+
+  font-size: 13px;
+  text-decoration: none;
+
+  border: 1px solid #222;
+  background: transparent;
+
+  color: #aaa;
+  transition: 0.15s ease;
+}
+
+.btn:hover {
+  color: white;
+  border-color: #333;
+  transform: translateY(-1px);
+}
+
+.btn--primary {
+  background: #111827;
+  color: white;
+}
