@@ -1,26 +1,23 @@
 <template>
-  <div class="card">
-    <slot />
-  </div>
+  <RouterLink :to="item.link" class="card">
+
+    <span class="icon">{{ item.icon }}</span>
+
+    <div class="content">
+      <div class="top">
+        <h3>{{ item.title }}</h3>
+        <span v-if="item.tag" class="tag">{{ item.tag }}</span>
+      </div>
+
+      <p>{{ item.desc }}</p>
+    </div>
+
+  </RouterLink>
 </template>
 
-<style scoped>
-.card {
-  background: #0f172a;
-  border: 1px solid #1f2937;
-  border-radius: 10px;
-  padding: 10px;
+<script setup lang="ts">
+defineProps<{ item: any }>()
+</script>
 
-  color: #e5e7eb;
-
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  border-color: #374151;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
-}
+<style>
 </style>

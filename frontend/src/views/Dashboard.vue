@@ -67,12 +67,10 @@ onMounted(refreshAll);
 
 <style scoped>
 .page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 8px;
-  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: block;
+
   background: #0a0a0a;
   color: #e5e7eb;
   font-family: monospace;
