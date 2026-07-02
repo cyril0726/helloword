@@ -1,19 +1,19 @@
 <template>
   <section class="hero page">
 
-    <!-- Partie gauche -->
+    <!-- LEFT -->
     <div class="hero__content">
 
-      <span class="eyebrow">LAB • EXPÉRIMENTAL</span>
+      <span class="eyebrow">GRIDCRAFT • WEB LAB</span>
 
-      <h1>
+      <h1 class="hero__title">
         <span>Créer.</span>
         <span>Expérimenter.</span>
-        <span>Partager.</span>
+        <span>Construire.</span>
       </h1>
 
-      <p>
-        Jeux, interfaces et expériences interactives.
+      <p class="hero__subtitle">
+        Un laboratoire d’interfaces, de mini-expériences et de systèmes web interactifs.
       </p>
 
       <div class="actions">
@@ -24,11 +24,43 @@
 
     </div>
 
-    <!-- Partie droite -->
+    <!-- RIGHT -->
     <div class="hero__visual">
 
-      <div class="hero-object">
-        <span class="hero-object__label">&lt;/&gt;</span>
+      <div class="hero-orb">
+
+<svg viewBox="0 0 200 200" class="hero-svg">
+  <defs>
+    <linearGradient id="g">
+      <stop offset="0%" stop-color="#aa3bff" />
+      <stop offset="100%" stop-color="#6b9bff" />
+    </linearGradient>
+  </defs>
+
+  <!-- grid -->
+  <g opacity="0.35">
+    <path d="M40 20 V180" stroke="#aaa" />
+    <path d="M80 20 V180" stroke="#aaa" />
+    <path d="M120 20 V180" stroke="#aaa" />
+    <path d="M160 20 V180" stroke="#aaa" />
+
+    <path d="M20 40 H180" stroke="#aaa" />
+    <path d="M20 80 H180" stroke="#aaa" />
+    <path d="M20 120 H180" stroke="#aaa" />
+    <path d="M20 160 H180" stroke="#aaa" />
+  </g>
+
+  <!-- core -->
+  <rect x="70" y="70" width="60" height="60" rx="12"
+        fill="url(#g)" opacity="0.9" />
+
+  <!-- orbit nodes -->
+  <circle cx="100" cy="20" r="5" fill="#aa3bff" />
+  <circle cx="180" cy="100" r="5" fill="#6b9bff" />
+  <circle cx="100" cy="180" r="5" fill="#aa3bff" />
+  <circle cx="20" cy="100" r="5" fill="#6b9bff" />
+</svg>
+
       </div>
 
     </div>
@@ -41,27 +73,40 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <style>
-h1 span {
-  display: block;
-}
-
-.hero__content h1 {
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-}
+/* =========================
+   LAYOUT
+========================= */
 
 .hero {
   display: grid;
   grid-template-columns: 1fr 420px;
   align-items: center;
-  gap: 48px;
-
-  min-height: 70vh;
+  gap: 60px;
+  min-height: 75vh;
 }
 
-.hero__content {
-  text-align: left;
+/* =========================
+   TEXT
+========================= */
+
+.hero__title span {
+  display: block;
 }
+
+.hero__title {
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.hero__subtitle {
+  margin-top: 14px;
+  opacity: 0.75;
+  max-width: 420px;
+}
+
+/* =========================
+   VISUAL WRAPPER
+========================= */
 
 .hero__visual {
   display: flex;
@@ -69,109 +114,70 @@ h1 span {
   align-items: center;
 }
 
-.hero-object__label {
-  position: relative;
-  z-index: 2;
-  font-size: 64px;
-  font-weight: 600;
-  color: #6b6b7a;
-}
-
-.hero-object::before {
-  content: "";
-  position: absolute;
-  inset: 20px;
-
-  border-radius: 50%;
-
-  background: radial-gradient(
-    circle,
-    rgba(170, 59, 255, 0.4),
-    transparent 70%
-  );
-
-  filter: blur(20px);
-  animation: pulse 4s ease-in-out infinite;
-}
-
-.hero-object {
-  width: 280px;
+.hero-orb {
+  width: min(300px, 80vw);
   aspect-ratio: 1;
+  position: relative;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  position: relative;
-  overflow: hidden;
-
   border-radius: 28px;
-
-  background: rgba(20, 20, 30, 0.6);
-  backdrop-filter: blur(12px);
+  background: rgba(20, 20, 30, 0.55);
+  backdrop-filter: blur(14px);
 
   border: 1px solid rgba(255, 255, 255, 0.08);
 
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
 
   animation: float 6s ease-in-out infinite;
 }
 
-.hero-object::after {
-  content: "";
+/* =========================
+   SVG
+========================= */
+
+.hero-svg {
+  width: 100%;
+  height: 100%;
   position: absolute;
-  top: -50%;
-  left: -50%;
-
-  width: 200%;
-  height: 200%;
-
-  background: radial-gradient(
-    circle,
-    rgba(170, 59, 255, 0.25),
-    transparent 60%
-  );
-
-  animation: rotateLight 10s linear infinite;
+  inset: 0;
+  filter: drop-shadow(0 0 8px rgba(170, 59, 255, 0.15));
 }
 
-
+/* =========================
+   ANIMATIONS
+========================= */
 
 @keyframes float {
+  0% { transform: translateY(0px) rotate(-2deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(-2deg); }
+}
 
-  0% {
-    transform: translateY(0px) rotate(-2deg);
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
   }
 
-  50% {
-    transform: translateY(-10px) rotate(2deg);
+  .hero__subtitle {
+    margin-left: auto;
+    margin-right: auto;
   }
-
-  100% {
-    transform: translateY(0px) rotate(-2deg);
+  .hero-orb {
+    width: 220px;
   }
 }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(0.9);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.8;
+@media (max-width: 480px) {
+  .hero-orb {
+    width: 180px;
   }
 }
-
-@keyframes rotateLight {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-
 </style>

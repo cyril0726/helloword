@@ -2,7 +2,7 @@
 
 ## Overview
 
-HelloWord is a full-stack interactive web lab built with Vue 3 and Cloudflare Workers.
+GridCraft is a full-stack interactive web lab built with Vue 3 and Cloudflare Workers.
 
 The project focuses on building a **modular UI system** and interactive experiments (mini-games, tools, prototypes).
 

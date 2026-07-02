@@ -1,6 +1,6 @@
 <template>
   <footer class="footer">
-    <span>© {{ year }} HelloWord</span>
+    <span>© {{ year }} GridCraft</span>
   </footer>
 </template>
 

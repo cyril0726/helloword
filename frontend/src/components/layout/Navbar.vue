@@ -3,7 +3,7 @@
 
     <!-- BRAND -->
     <RouterLink to="/" class="nav-brand">
-      HelloWord
+      GridCraft
     </RouterLink>
 
     <!-- RIGHT SIDE (nav + actions regroupés) -->

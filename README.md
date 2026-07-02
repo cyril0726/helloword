@@ -1,4 +1,4 @@
-# 🚀 HelloWord
+# 🚀 GridCraft
 
 Full-stack web project: interactive web lab + portfolio system + backend API.
 
@@ -8,7 +8,7 @@ Built with Vue 3 frontend and Cloudflare Workers backend.
 
 ## 🧭 Vision
 
-HelloWord is a personal interactive web lab focused on building:
+GridCraft is a personal interactive web lab focused on building:
 - experiments
 - mini-games
 - UI prototypes

@@ -7,13 +7,13 @@
       <div class="avatar">🧑‍🚀</div>
 
       <div>
-        <h2>HelloWord Lab</h2>
+        <h2>GridCraft Lab</h2>
         <span class="tag">Web • Games • Experiments</span>
       </div>
     </div>
 
     <p>
-      HelloWord est un laboratoire personnel de création numérique dédié aux interfaces interactives et aux expériences web.
+      GridCraft est un laboratoire personnel de création numérique dédié aux interfaces interactives et aux expériences web.
     </p>
 
     <p>
