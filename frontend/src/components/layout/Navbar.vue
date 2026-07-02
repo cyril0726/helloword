@@ -1,14 +1,10 @@
 <template>
   <header class="nav">
-
-    <!-- BRAND -->
-    <RouterLink to="/" class="nav-brand">
-      GridCraft
+    <RouterLink to="/" class="nav-brand" exact-active-class="">
+      CraftGuild
     </RouterLink>
 
-    <!-- RIGHT SIDE (nav + actions regroupés) -->
     <div class="nav-right">
-
       <nav class="nav-links">
         <RouterLink to="/" class="nav-item">Home</RouterLink>
         <RouterLink to="/lab" class="nav-item">Lab</RouterLink>
@@ -16,35 +12,31 @@
       </nav>
 
       <div class="nav-actions">
-        <!-- futur dashboard / profil -->
+        <ThemeSwitcher />
       </div>
-
     </div>
-
   </header>
 </template>
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import ThemeSwitcher from '@/components/ThemeSwitcher.vue'
 </script>
 
 <style scoped>
 .nav {
   height: 48px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  padding: 0 24px;
-
-  border-bottom: 1px solid #222;
-  background: #0f0f0f;
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
 }
 
 .nav-brand {
   text-decoration: none;
-  color: #fff;
+  color: var(--accent);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -54,28 +46,28 @@ import { RouterLink } from 'vue-router'
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-3);
 }
 
 .nav-links {
   display: flex;
-  gap: 20px;
+  gap: var(--space-4);
   align-items: center;
 }
 
 .nav-item {
   font-size: 13px;
-  color: #777;
+  color: var(--text-muted);
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: color var(--ease);
 }
 
 .nav-item:hover {
-  color: #fff;
+  color: var(--text);
 }
 
 .router-link-active {
-  color: #fff;
+  color: var(--accent);
 }
 
 /* future zone */

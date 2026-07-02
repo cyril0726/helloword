@@ -1,6 +1,6 @@
 <template>
   <footer class="footer">
-    <span>© {{ year }} GridCraft</span>
+    <span>© {{ year }} CraftGuild</span>
   </footer>
 </template>
 

@@ -15,46 +15,46 @@ const items = [
   {
     icon: "🎮",
     title: "Pendu",
-    desc: "Devine le mot avant d’être pendu.",
+    desc: "Devine le mot avant d'être pendu.",
     link: "/lab/pendu",
-    tag: "en travaux"
+    tag: "wip"
   },
   {
     icon: "🔢",
     title: "Tables",
     desc: "Entraîne-toi aux tables de multiplication.",
     link: "/lab/tables",
-    tag: "en travaux"
+    tag: "wip"
   },
   {
     icon: "🌍",
     title: "Drapeaux",
     desc: "Reconnais les pays grâce aux drapeaux.",
     link: "/lab/drapeaux",
-    tag: "en travaux"
+    tag: "wip"
   },
   {
     icon: "⭕❌",
     title: "Morpion",
     desc: "Affronte tes amis.",
     link: "/lab/morpion",
-    tag: "en travaux"
+    tag: "wip"
   },
   {
     icon: "🧠",
     title: "Boîte à idée",
     desc: "Concept de futurs jeux",
     link: "/lab/ideas",
-    tag: "en travaux"
+    tag: "wip"
   }
 ]
 </script>
 
-<style>
+<style scoped>
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 </style>

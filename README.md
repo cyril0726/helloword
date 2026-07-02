@@ -1,14 +1,14 @@
-# 🚀 GridCraft
+# 🚀 CraftGuild
 
 Full-stack web project: interactive web lab + portfolio system + backend API.
-
 Built with Vue 3 frontend and Cloudflare Workers backend.
 
 ---
 
 ## 🧭 Vision
 
-GridCraft is a personal interactive web lab focused on building:
+CraftGuild is a personal interactive web lab focused on building:
+
 - experiments
 - mini-games
 - UI prototypes
@@ -18,22 +18,43 @@ It is not a traditional portfolio, but a **living product lab**.
 
 ---
 
+## 🎨 Design Direction
+
+**Style : "Structured Dark Lab"** — dark mode épuré et discipliné (inspiration Linear)
+appliqué à un espace de découverte ludique (inspiration game launcher).
+
+- Fond sombre, jamais noir pur
+- Un accent unique et désaturé, sélectionnable parmi plusieurs presets (slate, sage, brass, coral, violet, cyan)
+- Cartes comme brique centrale (bordure fine, élévation légère au hover)
+- Navbar discrète, transitions rapides et douces (150–250ms)
+- Sans-serif nette pour l'UI (Inter), pas de mono ni d'emoji hors du Lab
+
+À éviter : dégradés violet/bleu génériques, glow, glassmorphism, couleurs flashy.
+
+Voir `/docs/Architecture.md` pour le détail du système de tokens.
+
+---
+
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - Vue 3
 - Vite
 - Vue Router
 - TypeScript
 
 ### Backend
+
 - Cloudflare Workers
 - Hono framework
 
 ### Database
+
 - Cloudflare D1 (SQLite-like)
 
 ### Deployment
+
 - Cloudflare Pages (frontend)
 - Cloudflare Workers (backend)
 
@@ -41,53 +62,71 @@ It is not a traditional portfolio, but a **living product lab**.
 
 ## 📦 Structure
 
+```
 /frontend → Vue application (public UI + lab + pages)
-/backend → API (Hono + Workers)
-/docs → Project documentation
+/backend  → API (Hono + Workers)
+/docs     → Project documentation
+```
+
+Frontend styles :
+
+```
+/styles
+  tokens.css          → variables globales (couleurs, espacement, thèmes)
+  global.css           → fondations (body, .page)
+  design-system.css    → composants réutilisables (.card, .btn)
+```
 
 ---
 
 ## 🚀 Features
 
 ### Public interface
-- Landing page (product-style entry point)
-- Lab (interactive grid of experiments)
-- About (product identity card)
+
+- Landing page (hero avec mini-preview animé du Lab)
+- Lab (grille interactive d'expériences)
+- About (carte d'identité produit avec sceau CG)
+- Sélecteur de thème (accent personnalisable, persistant en localStorage)
 
 ### Lab system
-- Interactive cards system
-- WIP / Live states
-- Click-based navigation
-- Component-based UI architecture
+
+- Interactive cards system (`ExplorerGrid` + `LabCard`)
+- États WIP / Live, avec navigation conditionnelle (une carte WIP n'est pas cliquable)
+- Badges de statut indépendants du thème d'accent
+- Navigation via `RouterLink` natif (accessibilité clavier incluse)
 
 ---
 
 ## 🎨 UI / Design System
 
-This project now includes a lightweight design system:
+Design system léger, entièrement variabilisé via `tokens.css` :
 
-- `.page` → global layout container
-- `.card` → reusable UI container
-- `.btn` → unified buttons
-- `.is-hoverable` → interactive states
+- `.page` → conteneur de layout global
+- `.card` / `.card.is-hoverable` → conteneur UI réutilisable
+- `.btn` / `.btn--primary` → boutons unifiés
+- Tokens de statut (`--status-wip`, `--status-live`) → indépendants du thème
+- Tokens d'accent (`--accent`, `--accent-hover`, `--accent-soft`) → pilotés par `[data-theme]`
 
-Design philosophy:
+Design philosophy :
+
 > consistency over page-specific styling
 
 ---
 
 ## 🔌 API
 
-Backend exposed under:
+Backend exposé sous :
 
-
+```
 /api/*
+```
 
+Exemples :
 
-Examples:
 - GET `/api/hello`
 - GET `/api/messages`
 - POST `/api/messages`
+- DELETE `/api/messages`
 
 ---
 
@@ -95,24 +134,31 @@ Examples:
 
 ```bash
 npm run dev
+```
 
-Runs:
+Lance :
 
-Frontend (Vite)
-Backend (Wrangler)
-Local environment
-📌 Status
+- Frontend (Vite)
+- Backend (Wrangler)
+- Environnement local
 
-Project is currently in active development:
+---
 
-Architecture: ✅
-Routing: ✅
-UI system: ⚙️ in progress (design system v1)
-Lab system: ⚙️ in progress (WIP cards)
-Backend API: ✅ stable
-📚 Documentation
+## 📌 Status
 
-See /docs:
+Projet actuellement en développement actif :
 
-Architecture
-Roadmap
+- Architecture : ✅
+- Routing : ✅
+- UI system / Design tokens : ✅ v1 stable
+- Lab system : ⚙️ en cours (premiers jeux en intégration)
+- Backend API : ✅ stable
+
+---
+
+## 📚 Documentation
+
+Voir `/docs` :
+
+- Architecture
+- Roadmap

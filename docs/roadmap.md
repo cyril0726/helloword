@@ -10,86 +10,88 @@
 
 ---
 
-## 🎨 Phase 2 — UI System (DONE)
+## ✅ Phase 2 — UI System (DONE)
 
-Core transformation into a product-like UI system.
+Transformation complète en système UI orienté produit.
 
-- Global layout system (`.page`)
-- Base components:
-  - `.card`
-  - `.btn`
-- Interactive Lab grid system
-- WIP / Live state system for cards
-- Hover / interaction standardization
-- Basic About page redesign (product card style)
+- Système de tokens CSS centralisé (`tokens.css` / `global.css` / `design-system.css`)
+- Direction artistique définie et appliquée : **"Structured Dark Lab"**
+- Système de thèmes d'accent (6 presets : slate, sage, brass, coral, violet, cyan) via `ThemeSwitcher.vue`
+- Composants de base : `.card`, `.btn`, `.btn--primary`
+- Statuts fonctionnels indépendants du thème (`--status-wip`, `--status-live`)
+- Hero repensé : mini-preview asymétrique et animée du Lab (signature visuelle)
+- About repensé : sceau/monogramme CG, carte d'identité
+- Navbar sobre avec sélecteur de thème intégré
+- Accessibilité de base : focus visible, navigation clavier sur les cartes
 
 ---
 
-## 🧩 Phase 3 — Lab System Expansion (NEXT)
+## 🧩 Phase 3 — Lab System Expansion (EN COURS)
 
-The Lab becomes the core product.
+Le Lab devient le produit central.
 
-- Add first real mini-games (one by one)
-- Standardize game structure
-- Improve Lab navigation system
-- Add “experiment states”:
-  - WIP
-  - Live
-  - Locked (future ideas)
-
-- Improve ExplorerGrid system
-- Add featured experiments
+- [x] Système de cartes avec navigation conditionnelle (WIP non cliquable)
+- [x] Badge de statut WIP / Live
+- [ ] Ajouter les premiers vrais mini-jeux (un par un)
+- [ ] Standardiser la structure d'un jeu
+- [ ] Ajouter l'état **Locked** (idées futures) en plus de WIP / Live
+- [ ] Améliorer le système de navigation du Lab
+- [ ] Améliorer `ExplorerGrid` (tri, filtres par statut ?)
+- [ ] Mettre en avant des expériences "featured"
+- [ ] Traiter la carte "Boîte à idées" différemment des vraies expériences (gabarit distinct)
 
 ---
 
 ## 🎨 Phase 4 — UI Polish
 
-- Responsive improvements (mobile first pass)
-- Micro-interactions (hover, transitions, feedback)
-- Design consistency audit
-- Typography system refinement
-- Spacing system standardization
+- [ ] Passage en revue responsive complet (mobile first pass)
+- [ ] Micro-interactions supplémentaires (au-delà du hero/theme switcher actuels)
+- [ ] Audit de cohérence design sur l'ensemble du site
+- [ ] Raffinement du système typographique
+- [ ] Standardisation fine du système d'espacement
+- [ ] Page 404 dans l'esprit de la DA
+- [ ] Vérification `prefers-reduced-motion` sur les animations (pulsation hero, transitions thème)
 
 ---
 
 ## 🔌 Phase 5 — Backend Expansion (OPTIONAL / SUPPORTING ROLE)
 
-Backend becomes secondary (support for Lab only):
+Le backend reste secondaire (support du Lab uniquement) :
 
-- Persist simple lab interactions
-- Expand D1 schema if needed
-- API refinement (clean endpoints)
-- Optional experiment storage
+- Persister des interactions simples du Lab
+- Étendre le schéma D1 si nécessaire
+- Affiner l'API (endpoints propres)
+- Stockage optionnel d'expériences
 
 ---
 
 ## 🧠 Phase 6 — Productization Layer
 
-Turn project into a coherent “web product”.
+Transformer le projet en véritable "produit web" cohérent.
 
-- Home as landing entry point
-- Lab as main experience
-- About as identity card system
-- Unified navigation flow
-- Optional “featured experiment system”
+- Home comme point d'entrée produit
+- Lab comme expérience principale
+- About comme carte d'identité (✅ posée avec le sceau CG)
+- Flow de navigation unifié
+- Système d'expériences "featured" (optionnel)
 
 ---
 
 ## 🚀 Phase 7 — Future Extensions (LATER)
 
-Only if needed:
+Seulement si nécessaire :
 
-- Authentication system (admin tools)
-- Admin dashboard (low priority)
-- Public sharing of experiments
-- Advanced project system (portfolio layer)
+- Système d'authentification (outils admin)
+- Dashboard admin (basse priorité) — pourrait réutiliser une DA différente (terminal / glassmorphism, écartées pour le public mais pertinentes pour un espace technique)
+- Partage public des expériences
+- Système de projets avancé (couche portfolio)
 
 ---
 
 ## 🧹 Ongoing Principles
 
-- UI consistency over feature quantity
-- Lab-first mindset (experiments first)
-- Reusable components only
-- Design system evolves gradually
-- Avoid page-specific styling whenever possible
+- Cohérence UI avant quantité de features
+- Lab-first mindset (les expériences d'abord)
+- Composants réutilisables uniquement
+- Le design system évolue graduellement, toujours via tokens
+- Éviter le style page-spécifique autant que possible
