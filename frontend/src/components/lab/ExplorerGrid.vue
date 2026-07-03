@@ -17,35 +17,28 @@ const items = [
     title: "Pendu",
     desc: "Devine le mot avant d'être pendu.",
     link: "/lab/pendu",
-    tag: "wip"
+    tag: "live"
   },
   {
     icon: "🔢",
     title: "Tables",
     desc: "Entraîne-toi aux tables de multiplication.",
     link: "/lab/tables",
-    tag: "wip"
+    tag: "locked"
   },
   {
     icon: "🌍",
     title: "Drapeaux",
     desc: "Reconnais les pays grâce aux drapeaux.",
     link: "/lab/drapeaux",
-    tag: "wip"
+    tag: "locked"
   },
   {
     icon: "⭕❌",
     title: "Morpion",
     desc: "Affronte tes amis.",
     link: "/lab/morpion",
-    tag: "wip"
-  },
-  {
-    icon: "🧠",
-    title: "Boîte à idée",
-    desc: "Concept de futurs jeux",
-    link: "/lab/ideas",
-    tag: "wip"
+    tag: "locked"
   }
 ]
 </script>

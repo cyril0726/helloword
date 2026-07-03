@@ -39,6 +39,8 @@
     --status-wip-bg: rgba(181, 152, 90, 0.12);
     --status-live: #6fae7f;
     --status-live-bg: rgba(111, 174, 127, 0.12);
+    --status-locked: #6b6b70;
+  --status-locked-bg: rgba(107, 107, 112, 0.1);
 
 }
 

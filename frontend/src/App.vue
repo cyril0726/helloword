@@ -1,9 +1,6 @@
-/*👉 rôle :
--> affiche la page active*/
 <template>
   <component :is="layout">
     <router-view />
-    
   </component>
 </template>
 
@@ -12,13 +9,14 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 import PublicLayout from '@/layouts/PublicLayout.vue'
+import GameLayout from '@/layouts/GameLayout.vue'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 
 const route = useRoute()
 
 const layout = computed(() => {
-  return route.meta.layout === 'dashboard'
-    ? DashboardLayout
-    : PublicLayout
+  if (route.meta.layout === 'dashboard') return DashboardLayout
+  if (route.meta.layout === 'game') return GameLayout
+  return PublicLayout
 })
 </script>

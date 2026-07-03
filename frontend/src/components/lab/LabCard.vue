@@ -1,15 +1,11 @@
 <template>
   <component
-    :is="isLive ? RouterLink : 'div'"
-    :to="isLive ? item.link : undefined"
+    :is="isClickable ? RouterLink : 'div'"
+    :to="isClickable ? item.link : undefined"
     class="card lab-card"
-    :class="{ 'is-hoverable': isLive, 'lab-card--disabled': !isLive }"
+    :class="{ 'is-hoverable': isClickable, 'lab-card--disabled': !isClickable }"
   >
-    <span
-      v-if="item?.tag"
-      class="badge"
-      :class="tagClass"
-    >
+    <span v-if="item?.tag" class="badge" :class="badgeClass">
       {{ tagLabel }}
     </span>
 
@@ -30,14 +26,24 @@ const props = defineProps({
   item: Object
 })
 
-const isLive = computed(() => props.item?.tag === 'live')
+const isClickable = computed(() => props.item?.tag !== 'locked')
 
-const tagClass = computed(() => {
-  return props.item?.tag === 'live' ? 'badge--live' : 'badge--wip'
+const badgeClass = computed(() => {
+  const map = {
+    live: 'badge--live',
+    wip: 'badge--wip',
+    locked: 'badge--locked'
+  }
+  return map[props.item?.tag] || 'badge--wip'
 })
 
 const tagLabel = computed(() => {
-  return props.item?.tag === 'live' ? 'live' : 'en travaux'
+  const map = {
+    live: 'live',
+    wip: 'en travaux',
+    locked: 'bientôt'
+  }
+  return map[props.item?.tag] || 'en travaux'
 })
 </script>
 
@@ -90,6 +96,12 @@ const tagLabel = computed(() => {
   background: var(--status-live-bg);
   border-color: var(--status-live);
   color: var(--status-live);
+}
+
+.badge--locked {
+  background: var(--status-locked-bg);
+  border-color: var(--status-locked);
+  color: var(--status-locked);
 }
 
 .lab-card.is-hoverable:hover {
