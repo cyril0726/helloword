@@ -40,6 +40,10 @@
     --status-live: #6fae7f;
     --status-live-bg: rgba(111, 174, 127, 0.12);
 
+}
+
+
+
     [data-theme="slate"] {
   --accent: #6e85a6;
   --accent-hover: #8299bc;
@@ -75,7 +79,3 @@
   --accent-hover: #64c8d3;
   --accent-soft: rgba(79, 179, 191, 0.12);
 }
-}
-
-
-
