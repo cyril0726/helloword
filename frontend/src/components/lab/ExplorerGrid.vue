@@ -30,8 +30,8 @@ const items = [
     icon: "🌍",
     title: "Drapeaux",
     desc: "Reconnais les pays grâce aux drapeaux.",
-    link: "/lab/drapeaux",
-    tag: "locked"
+    link: "/lab/flags",
+    tag: "live"
   },
   {
     icon: "⭕❌",
