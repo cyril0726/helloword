@@ -12,53 +12,52 @@
 
 ## ✅ Phase 2 — UI System (DONE)
 
-Transformation complète en système UI orienté produit.
-
 - Système de tokens CSS centralisé (`tokens.css` / `global.css` / `design-system.css`)
 - Direction artistique définie et appliquée : **"Structured Dark Lab"**
-- Système de thèmes d'accent (6 presets : slate, sage, brass, coral, violet, cyan) via `ThemeSwitcher.vue`
+- Système de thèmes d'accent (6 presets) via `ThemeSwitcher.vue`
 - Composants de base : `.card`, `.btn`, `.btn--primary`
-- Statuts fonctionnels indépendants du thème (`--status-wip`, `--status-live`)
-- Hero repensé : mini-preview asymétrique et animée du Lab (signature visuelle)
-- About repensé : sceau/monogramme CG, carte d'identité
+- Statuts fonctionnels indépendants du thème (`--status-wip`, `--status-live`, `--status-locked`)
+- Hero repensé : mini-preview asymétrique et animée du Lab
+- About repensé : sceau/monogramme CG
 - Navbar sobre avec sélecteur de thème intégré
-- Accessibilité de base : focus visible, navigation clavier sur les cartes
+- Accessibilité de base : focus visible, navigation clavier
 
 ---
 
 ## 🧩 Phase 3 — Lab System Expansion (EN COURS)
 
-Le Lab devient le produit central.
-
-- [x] Système de cartes avec navigation conditionnelle (WIP non cliquable)
-- [x] Badge de statut WIP / Live
-- [ ] Ajouter les premiers vrais mini-jeux (un par un)
-- [ ] Standardiser la structure d'un jeu
-- [ ] Ajouter l'état **Locked** (idées futures) en plus de WIP / Live
-- [ ] Améliorer le système de navigation du Lab
+- [x] Système de cartes avec navigation conditionnelle (3 états : locked / wip / live)
+- [x] `GameLayout` centralisé (topbar fine, titre/description via `route.meta`)
+- [x] Architecture standardisée pour les jeux (vue → composant → composable)
+- [x] Convention de nommage établie (anglais technique / français affiché)
+- [x] Convention de gestion des assets statiques (`/public/data`, `/public/images`, namespacés par jeu)
+- [x] **Hangman** porté (logique + UI complètes)
+- [x] **Tables** porté (mode Challenge chrono / Entraînement zen)
+- [x] **Flags** porté (JSON + SVG, options limitées au continent de la question)
+- [ ] **Morpion** à porter/créer
+- [ ] **Boîte à idées** — traitement différent des vrais jeux (pas un mini-jeu, un espace de concept)
+- [ ] Ajouter l'état **Locked** visible sur les jeux pas encore commencés (Morpion, Boîte à idées actuellement)
 - [ ] Améliorer `ExplorerGrid` (tri, filtres par statut ?)
 - [ ] Mettre en avant des expériences "featured"
-- [ ] Traiter la carte "Boîte à idées" différemment des vraies expériences (gabarit distinct)
 
 ---
 
 ## 🎨 Phase 4 — UI Polish
 
 - [ ] Passage en revue responsive complet (mobile first pass)
-- [ ] Micro-interactions supplémentaires (au-delà du hero/theme switcher actuels)
+- [ ] Micro-interactions supplémentaires
 - [ ] Audit de cohérence design sur l'ensemble du site
-- [ ] Raffinement du système typographique
-- [ ] Standardisation fine du système d'espacement
+- [ ] Raffinement typographique et système d'espacement
 - [ ] Page 404 dans l'esprit de la DA
-- [ ] Vérification `prefers-reduced-motion` sur les animations (pulsation hero, transitions thème)
+- [ ] Favicon décliné du sceau CG
+- [ ] Vérification `prefers-reduced-motion` sur les animations (pulsation hero, shake Hangman, transitions thème)
+- [ ] Écran de fin de jeu plus posé (confirmation "Rejouer" plutôt que redémarrage automatique, notamment Hangman)
 
 ---
 
 ## 🔌 Phase 5 — Backend Expansion (OPTIONAL / SUPPORTING ROLE)
 
-Le backend reste secondaire (support du Lab uniquement) :
-
-- Persister des interactions simples du Lab
+- Persister des interactions simples du Lab (scores, meilleurs streaks ?)
 - Étendre le schéma D1 si nécessaire
 - Affiner l'API (endpoints propres)
 - Stockage optionnel d'expériences
@@ -66,8 +65,6 @@ Le backend reste secondaire (support du Lab uniquement) :
 ---
 
 ## 🧠 Phase 6 — Productization Layer
-
-Transformer le projet en véritable "produit web" cohérent.
 
 - Home comme point d'entrée produit
 - Lab comme expérience principale
@@ -79,10 +76,8 @@ Transformer le projet en véritable "produit web" cohérent.
 
 ## 🚀 Phase 7 — Future Extensions (LATER)
 
-Seulement si nécessaire :
-
 - Système d'authentification (outils admin)
-- Dashboard admin (basse priorité) — pourrait réutiliser une DA différente (terminal / glassmorphism, écartées pour le public mais pertinentes pour un espace technique)
+- Dashboard admin (basse priorité) — DA distincte possible (terminal / glassmorphism)
 - Partage public des expériences
 - Système de projets avancé (couche portfolio)
 
@@ -93,5 +88,6 @@ Seulement si nécessaire :
 - Cohérence UI avant quantité de features
 - Lab-first mindset (les expériences d'abord)
 - Composants réutilisables uniquement
+- Logique de jeu séparée de l'affichage (composables purs, testables)
 - Le design system évolue graduellement, toujours via tokens
 - Éviter le style page-spécifique autant que possible

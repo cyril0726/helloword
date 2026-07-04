@@ -11,9 +11,10 @@
         <RouterLink to="/about" class="nav-item">About</RouterLink>
       </nav>
 
-      <div class="nav-actions">
-        <ThemeSwitcher />
-      </div>
+		<div class="nav-actions">
+      <AccountTeaser />
+		  <ThemeSwitcher />
+		</div>
     </div>
   </header>
 </template>
@@ -21,6 +22,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import ThemeSwitcher from '@/components/ThemeSwitcher.vue'
+import AccountTeaser from '@/components/AccountTeaser.vue'
 </script>
 
 <style scoped>

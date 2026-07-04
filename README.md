@@ -29,9 +29,9 @@ appliqué à un espace de découverte ludique (inspiration game launcher).
 - Navbar discrète, transitions rapides et douces (150–250ms)
 - Sans-serif nette pour l'UI (Inter), pas de mono ni d'emoji hors du Lab
 
-À éviter : dégradés violet/bleu génériques, glow, glassmorphism, couleurs flashy.
+À éviter : dégradés flashy, glow, glassmorphism, couleurs saturées.
 
-Voir `/docs/Architecture.md` pour le détail du système de tokens.
+Voir `/docs/Architecture.md` pour le détail du système de tokens et de l'architecture des jeux.
 
 ---
 
@@ -63,18 +63,19 @@ Voir `/docs/Architecture.md` pour le détail du système de tokens.
 ## 📦 Structure
 
 ```
-/frontend → Vue application (public UI + lab + pages)
+/frontend
+  /public
+    /data/games/<jeu>/       → données statiques (JSON) par jeu
+    /images/games/<jeu>/     → assets images par jeu
+  /src
+    /views                   → pages (HomeView, LabView, AboutView, DashboardView)
+    /views/games             → point d'entrée de chaque jeu (ex: HangmanView.vue)
+    /components              → composants UI génériques (LabCard, GameLayout, ThemeSwitcher...)
+    /components/games/<jeu>  → composants UI spécifiques à un jeu
+    /composables/games/<jeu> → logique métier d'un jeu (state, règles), sans DOM
+    /styles                  → design system (tokens.css, global.css, design-system.css)
 /backend  → API (Hono + Workers)
 /docs     → Project documentation
-```
-
-Frontend styles :
-
-```
-/styles
-  tokens.css          → variables globales (couleurs, espacement, thèmes)
-  global.css           → fondations (body, .page)
-  design-system.css    → composants réutilisables (.card, .btn)
 ```
 
 ---
@@ -84,16 +85,25 @@ Frontend styles :
 ### Public interface
 
 - Landing page (hero avec mini-preview animé du Lab)
-- Lab (grille interactive d'expériences)
+- Lab (grille interactive d'expériences, 3 états : locked / wip / live)
 - About (carte d'identité produit avec sceau CG)
 - Sélecteur de thème (accent personnalisable, persistant en localStorage)
 
 ### Lab system
 
-- Interactive cards system (`ExplorerGrid` + `LabCard`)
-- États WIP / Live, avec navigation conditionnelle (une carte WIP n'est pas cliquable)
-- Badges de statut indépendants du thème d'accent
-- Navigation via `RouterLink` natif (accessibilité clavier incluse)
+- `ExplorerGrid` + `LabCard`, navigation conditionnelle selon le statut
+- `GameLayout` : layout dédié plein écran pour les jeux (topbar fine, pas de navbar publique)
+- Titre/description de chaque jeu déclarés dans `route.meta`
+
+### Jeux migrés
+
+| Jeu | Route | Statut |
+|---|---|---|
+| Hangman (Pendu) | `/lab/hangman` | ✅ porté, logique + UI complètes |
+| Tables | `/lab/tables` | ✅ porté (mode Challenge chrono / Entraînement zen) |
+| Flags (Drapeaux) | `/lab/flags` | ✅ porté (données JSON + images SVG statiques) |
+| Morpion | — | ⏳ à venir |
+| Boîte à idées | — | ⏳ à venir |
 
 ---
 
@@ -104,12 +114,9 @@ Design system léger, entièrement variabilisé via `tokens.css` :
 - `.page` → conteneur de layout global
 - `.card` / `.card.is-hoverable` → conteneur UI réutilisable
 - `.btn` / `.btn--primary` → boutons unifiés
-- Tokens de statut (`--status-wip`, `--status-live`) → indépendants du thème
+- Tokens de statut (`--status-wip`, `--status-live`, `--status-locked`) → indépendants du thème
 - Tokens d'accent (`--accent`, `--accent-hover`, `--accent-soft`) → pilotés par `[data-theme]`
-
-Design philosophy :
-
-> consistency over page-specific styling
+- `--danger` / `--danger-bg` → retours d'erreur (timer critique, mauvaise réponse)
 
 ---
 
@@ -151,7 +158,7 @@ Projet actuellement en développement actif :
 - Architecture : ✅
 - Routing : ✅
 - UI system / Design tokens : ✅ v1 stable
-- Lab system : ⚙️ en cours (premiers jeux en intégration)
+- Lab system : ⚙️ en cours (3 jeux sur 5 portés)
 - Backend API : ✅ stable
 
 ---
