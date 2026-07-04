@@ -3,7 +3,7 @@ import Dashboard from '../views/Dashboard.vue'
 import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import Lab from '../views/Lab.vue'
-import Pendu from '../views/PenduView.vue'
+import Pendu from '../views/games/HangmanView.vue'
 
 const routes = [
   {

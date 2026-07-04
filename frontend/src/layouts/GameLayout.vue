@@ -33,6 +33,7 @@ const route = useRoute()
 }
 
 .game-topbar {
+  height: 48px;
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -41,11 +42,11 @@ const route = useRoute()
 }
 
 .game-brand {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--accent);
   text-decoration: none;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
 }
 
 .game-topbar__sep {
