@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import Lab from '../views/Lab.vue'
 import Pendu from '../views/games/HangmanView.vue'
+import Tables from '../views/games/TablesView.vue'
 
 const routes = [
   {
@@ -22,10 +23,14 @@ const routes = [
   meta: {
     layout: 'game',
     title: 'Pendu',
-    description: "Devine le mot avant d'être pendu."
   }
 },
-      {
+{
+  path: '/lab/tables',
+  component: Tables,
+  meta: { layout: 'game' }
+},
+{
     path: '/about',
     component: About,
     meta: { layout: 'public' }

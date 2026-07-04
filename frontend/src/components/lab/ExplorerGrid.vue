@@ -24,7 +24,7 @@ const items = [
     title: "Tables",
     desc: "Entraîne-toi aux tables de multiplication.",
     link: "/lab/tables",
-    tag: "locked"
+    tag: "wip"
   },
   {
     icon: "🌍",
