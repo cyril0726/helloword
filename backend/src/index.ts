@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import tictactoe from "./routes/tictactoe";
 
 type Env = {
   DB: D1Database;
@@ -16,6 +17,8 @@ app.use(
     allowHeaders: ["Content-Type"],
   })
 );
+
+app.route("/api/tictactoe", tictactoe);
 
 // --- ROUTES ---
 app.get("/", (c) => {

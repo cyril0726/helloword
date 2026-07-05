@@ -37,8 +37,8 @@ const items = [
     icon: "⭕❌",
     title: "Morpion",
     desc: "Affronte tes amis.",
-    link: "/lab/morpion",
-    tag: "locked"
+    link: "/lab/tictactoe",
+    tag: "wip"
   }
 ]
 </script>
