@@ -38,7 +38,7 @@ const items = [
     title: "Morpion",
     desc: "Affronte tes amis.",
     link: "/lab/tictactoe",
-    tag: "wip"
+    tag: "live"
   }
 ]
 </script>
