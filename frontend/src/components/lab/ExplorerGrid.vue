@@ -45,7 +45,7 @@ const items = [
     title: "QuickDraw",
     desc: "Sois le plus rapide à réagir au signal, entre potes.",
     link: "/lab/quickdraw",
-    tag: "wip"
+    tag: "live"
   },
 ]
 </script>
