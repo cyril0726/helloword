@@ -1,24 +1,22 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import tictactoe from "./routes/tictactoe";
+import quickdraw from "./routes/quickdraw";
+import { QuickdrawRoom } from "./durable-objects/QuickdrawRoom";
 
 type Env = {
   DB: D1Database;
+  QUICKDRAW_ROOM: DurableObjectNamespace;
 };
 
 const app = new Hono<{ Bindings: Env }>();
 
 // ✅ CORS middleware officiel Hono
-app.use(
-  "*",
-  cors({
-    origin: "*",
-    allowMethods: ["GET", "POST", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type"],
-  })
-);
+app.use("*", cors({ origin: "*", allowMethods: ["GET", "POST", "DELETE", "OPTIONS"], allowHeaders: ["Content-Type"] }));
+
 
 app.route("/api/tictactoe", tictactoe);
+app.route("/api/quickdraw", quickdraw);
 
 // --- ROUTES ---
 app.get("/", (c) => {
@@ -86,5 +84,9 @@ app.delete("/api/messages", async (c) => {
 
   return c.json({ success: true });
 });
+
+// obligatoire : Wrangler doit voir la classe exportée depuis l'entrypoint
+export { QuickdrawRoom };
+
 
 export default app;

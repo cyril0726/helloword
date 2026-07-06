@@ -38,25 +38,16 @@ Voir `/docs/Architecture.md` pour le détail du système de tokens et de l'archi
 ## 🛠️ Tech Stack
 
 ### Frontend
-
-- Vue 3
-- Vite
-- Vue Router
-- TypeScript
+Vue 3, Vite, Vue Router, TypeScript
 
 ### Backend
-
-- Cloudflare Workers
-- Hono framework
+Cloudflare Workers, Hono framework
 
 ### Database
-
-- Cloudflare D1 (SQLite-like)
+Cloudflare D1 (SQLite-like)
 
 ### Deployment
-
-- Cloudflare Pages (frontend)
-- Cloudflare Workers (backend)
+Cloudflare Pages (frontend), Cloudflare Workers (backend)
 
 ---
 
@@ -69,12 +60,18 @@ Voir `/docs/Architecture.md` pour le détail du système de tokens et de l'archi
     /images/games/<jeu>/     → assets images par jeu
   /src
     /views                   → pages (HomeView, LabView, AboutView, DashboardView)
-    /views/games             → point d'entrée de chaque jeu (ex: HangmanView.vue)
-    /components              → composants UI génériques (LabCard, GameLayout, ThemeSwitcher...)
+    /views/games             → point d'entrée de chaque jeu
+    /components              → composants UI génériques
     /components/games/<jeu>  → composants UI spécifiques à un jeu
-    /composables/games/<jeu> → logique métier d'un jeu (state, règles), sans DOM
+    /composables/games/<jeu> → logique métier d'un jeu, sans DOM
     /styles                  → design system (tokens.css, global.css, design-system.css)
-/backend  → API (Hono + Workers)
+  .env                       → VITE_API_URL (local)
+  .env.production            → VITE_API_URL (Worker déployé)
+
+/backend
+  /migrations                → fichiers SQL numérotés séquentiellement (0001, 0002...)
+  /src/routes/<jeu>.ts       → routes API dédiées à un jeu multijoueur/serveur
+
 /docs     → Project documentation
 ```
 
@@ -88,52 +85,42 @@ Voir `/docs/Architecture.md` pour le détail du système de tokens et de l'archi
 - Lab (grille interactive d'expériences, 3 états : locked / wip / live)
 - About (carte d'identité produit avec sceau CG)
 - Sélecteur de thème (accent personnalisable, persistant en localStorage)
+- Teaser compte/login (icône navbar désactivée, fonctionnalité à venir)
 
-### Lab system
+### Jeux
 
-- `ExplorerGrid` + `LabCard`, navigation conditionnelle selon le statut
-- `GameLayout` : layout dédié plein écran pour les jeux (topbar fine, pas de navbar publique)
-- Titre/description de chaque jeu déclarés dans `route.meta`
+| Jeu | Route | Type | Statut |
+|---|---|---|---|
+| Hangman (Pendu) | `/lab/hangman` | solo | ✅ porté |
+| Tables | `/lab/tables` | solo | ✅ porté |
+| Flags (Drapeaux) | `/lab/flags` | solo | ✅ porté |
+| TicTacToe (Morpion) | `/lab/tictactoe` | **multijoueur** | ✅ porté |
+| Boîte à idées | — | — | ⏳ à venir |
 
-### Jeux migrés
-
-| Jeu | Route | Statut |
-|---|---|---|
-| Hangman (Pendu) | `/lab/hangman` | ✅ porté, logique + UI complètes |
-| Tables | `/lab/tables` | ✅ porté (mode Challenge chrono / Entraînement zen) |
-| Flags (Drapeaux) | `/lab/flags` | ✅ porté (données JSON + images SVG statiques) |
-| Morpion | — | ⏳ à venir |
-| Boîte à idées | — | ⏳ à venir |
+**TicTacToe** est le premier jeu multijoueur du Lab : partie créée via un code de session partageable par lien, synchronisation par polling HTTP (pas de WebSocket), état de jeu et validation des coups gérés côté serveur (Hono + D1).
 
 ---
 
 ## 🎨 UI / Design System
 
-Design system léger, entièrement variabilisé via `tokens.css` :
-
-- `.page` → conteneur de layout global
-- `.card` / `.card.is-hoverable` → conteneur UI réutilisable
-- `.btn` / `.btn--primary` → boutons unifiés
-- Tokens de statut (`--status-wip`, `--status-live`, `--status-locked`) → indépendants du thème
-- Tokens d'accent (`--accent`, `--accent-hover`, `--accent-soft`) → pilotés par `[data-theme]`
-- `--danger` / `--danger-bg` → retours d'erreur (timer critique, mauvaise réponse)
+- `.page`, `.card` / `.card.is-hoverable`, `.btn` / `.btn--primary`
+- Tokens de statut (`--status-wip`, `--status-live`, `--status-locked`) indépendants du thème
+- Tokens d'accent (`--accent`, `--accent-hover`, `--accent-soft`) pilotés par `[data-theme]`
+- `--danger` / `--danger-bg` pour les retours d'erreur
 
 ---
 
 ## 🔌 API
 
-Backend exposé sous :
-
 ```
-/api/*
+/api/hello
+/api/messages         GET / POST / DELETE
+/api/tictactoe/create         POST
+/api/tictactoe/:code/join     POST
+/api/tictactoe/:code          GET
+/api/tictactoe/:code/move     POST
+/api/tictactoe/:code/rematch  POST
 ```
-
-Exemples :
-
-- GET `/api/hello`
-- GET `/api/messages`
-- POST `/api/messages`
-- DELETE `/api/messages`
 
 ---
 
@@ -143,29 +130,28 @@ Exemples :
 npm run dev
 ```
 
-Lance :
+Lance frontend (Vite) + backend (Wrangler) en local.
 
-- Frontend (Vite)
-- Backend (Wrangler)
-- Environnement local
+**Backend — commandes utiles :**
+```bash
+npm run db:dev      # applique les migrations en local
+npm run db:prod     # applique les migrations en remote (prod)
+npm run deploy      # déploie le Worker
+npm run init-prod   # db:prod puis deploy, enchaînés
+```
 
 ---
 
 ## 📌 Status
 
-Projet actuellement en développement actif :
-
 - Architecture : ✅
 - Routing : ✅
 - UI system / Design tokens : ✅ v1 stable
-- Lab system : ⚙️ en cours (3 jeux sur 5 portés)
-- Backend API : ✅ stable
+- Lab system : ⚙️ en cours (4 jeux sur 5 portés, dont 1 multijoueur)
+- Backend API : ✅ stable, première fonctionnalité serveur réelle (TicTacToe) en place
 
 ---
 
 ## 📚 Documentation
 
-Voir `/docs` :
-
-- Architecture
-- Roadmap
+Voir `/docs` : Architecture, Roadmap

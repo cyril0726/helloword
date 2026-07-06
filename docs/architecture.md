@@ -3,184 +3,167 @@
 ## Overview
 
 CraftGuild est un lab web interactif full-stack, construit avec Vue 3 et Cloudflare Workers.
-Le projet est structuré autour d'un **système de design variabilisé** (tokens CSS) et d'expériences interactives (mini-jeux, outils, prototypes).
+Le projet est structuré autour d'un **système de design variabilisé** (tokens CSS) et d'expériences interactives (mini-jeux, outils, prototypes) — certaines purement front, d'autres nécessitant un vrai backend (jeux multijoueurs).
 
 ---
 
 ## 🧭 System Design
 
-Le projet repose sur 3 couches principales :
-
 1. **UI Layer (Frontend)** — Vue 3 SPA, design system piloté par tokens CSS
-2. **API Layer (Backend)** — Cloudflare Workers, Hono, API REST simple
-3. **Data Layer** — Cloudflare D1 (SQLite-like), utilisée pour les expériences
+2. **API Layer (Backend)** — Cloudflare Workers, Hono, API REST
+3. **Data Layer** — Cloudflare D1 (SQLite-like)
 
 ---
 
 ## 🖥️ Frontend (Vue 3)
 
-### Stack
-
-Vue 3, Vite, Vue Router, TypeScript
-
-### Architecture Style
-
 ```
 /views
-  HomeView.vue
-  LabView.vue
-  AboutView.vue
-  DashboardView.vue
+  HomeView.vue, LabView.vue, AboutView.vue, DashboardView.vue
   /games
-    HangmanView.vue
-    TablesView.vue
-    FlagsView.vue
+    HangmanView.vue, TablesView.vue, FlagsView.vue, TicTacToeView.vue
 
 /components
   /layout       → Navbar, Footer, PublicLayout
-  /games/<jeu>  → composants UI spécifiques à un jeu (ex: /games/hangman/HangmanGame.vue)
-  LabCard.vue, ThemeSwitcher.vue, ...
+  /games/<jeu>  → composants UI spécifiques à un jeu
+  LabCard.vue, ThemeSwitcher.vue, AccountTeaser.vue, ...
 
 /layouts
-  PublicLayout.vue
-  GameLayout.vue
-  DashboardLayout.vue
+  PublicLayout.vue, GameLayout.vue, DashboardLayout.vue
 
 /composables
-  /games/<jeu>  → logique métier pure d'un jeu (ex: /games/hangman/useHangman.ts)
+  /games/<jeu>  → logique métier pure d'un jeu (ex: /games/tictactoe/useTicTacToe.ts)
 
 /styles
   tokens.css, global.css, design-system.css
 ```
 
+### Variables d'environnement
+
+```
+.env              → VITE_API_URL=http://localhost:8787   (dev)
+.env.production   → VITE_API_URL=https://<worker>.workers.dev
+```
+
+Tout composable qui appelle le backend construit son URL via `import.meta.env.VITE_API_URL` — jamais d'URL en dur dans le code, pour que le même build fonctionne en dev et en prod sans modification.
+
 ---
 
 ## 📝 Convention de nommage
 
-**Tous les noms de fichiers et de dossiers techniques sont en anglais**, y compris pour des jeux dont le nom affiché est en français (ex: "Pendu" → fichiers `Hangman*`, "Drapeaux" → fichiers `Flags*`). Le nom d'affichage (français) vit uniquement dans le contenu (`route.meta.title`, labels UI) — jamais dans le nom de fichier.
+Noms de fichiers/dossiers techniques **en anglais**, y compris pour des jeux au nom affiché en français (Pendu → `Hangman*`, Drapeaux → `Flags*`, Morpion → `TicTacToe*`). Le nom affiché vit uniquement dans le contenu (`route.meta.title`), jamais dans le nom de fichier.
 
-**Toute vue (`/views`) porte le suffixe `View`** : `HomeView.vue`, `LabView.vue`, `HangmanView.vue`. Convention standard Vue (générée par `create-vue`), qui distingue sans ambiguïté un point d'entrée de route d'un composant réutilisable.
-
-**Règle de sous-dossiers pour les jeux :** dès qu'un jeu a plus d'un fichier dans `/components/games` ou `/composables/games`, il obtient son propre sous-dossier (`/games/hangman/`, `/games/flags/`). Un seul fichier peut rester à plat. `/views/games/` reste à plat par nature (une vue = un point d'entrée par jeu).
+Toute vue porte le suffixe `View`. Sous-dossier par jeu dès que plus d'un fichier existe dans `/components/games` ou `/composables/games`.
 
 ---
 
-## 🎨 Design System — architecture en 3 fichiers
+## 🎨 Design System
 
-Chargés dans cet ordre (`main.ts`) :
-
-```ts
-import '@/styles/tokens.css'
-import '@/styles/global.css'
-import '@/styles/design-system.css'
-```
-
-### 1. `tokens.css` — le vocabulaire
-
-Uniquement des variables CSS :
+Chargés dans cet ordre (`main.ts`) : `tokens.css` → `global.css` → `design-system.css`.
 
 ```css
 :root {
   --bg, --bg-elevated, --border, --border-hover
   --text, --text-muted, --text-faint
   --accent, --accent-hover, --accent-soft   /* piloté par thème */
-  --status-wip, --status-wip-bg
-  --status-live, --status-live-bg
-  --status-locked, --status-locked-bg       /* indépendants du thème */
-  --danger, --danger-bg                      /* erreurs, alertes (ex: timer critique) */
+  --status-wip, --status-live, --status-locked
+  --danger, --danger-bg
   --font-base, --space-1..6, --radius-sm/md, --ease
 }
 ```
 
-### 2. `global.css` — les fondations
-
-Règles appliquées aux éléments HTML natifs / conteneurs structurels (`body`, `.page`).
-
-### 3. `design-system.css` — les composants réutilisables
-
-`.card`, `.card.is-hoverable`, `.btn`, `.btn--primary`.
-
----
-
-## 🎭 Système de thèmes
-
-Accent personnalisable via `[data-theme]` sur `<html>` — 6 presets (slate, sage, brass, coral, violet, cyan), géré par `ThemeSwitcher.vue`, persisté en `localStorage`.
-
-**Ce qui suit le thème :** boutons primaires, eyebrow du hero, mini-tuiles "live" du hero, sceau CG de l'About, bordure hover/focus des cartes Lab.
-
-**Ce qui ne suit PAS le thème (volontaire) :** badges de statut Lab, `--danger` (les couleurs fonctionnelles ne doivent pas changer avec l'esthétique).
+`[data-theme]` sur `<html>` pilote l'accent (6 presets), géré par `ThemeSwitcher.vue`, persisté en `localStorage`.
 
 ---
 
 ## 🧪 Lab System
 
-- `ExplorerGrid.vue` → génère la grille depuis une liste d'items
-- `LabCard.vue` → 3 états :
-  - `locked` → non cliquable, pas de route existante
-  - `wip` → route existe, cliquable, contenu en construction
-  - `live` → jeu complet et jouable
-  - Rendu conditionnel via `<component :is="isClickable ? RouterLink : 'div'">`
-  - Focus visible, accessibilité clavier
+`ExplorerGrid.vue` + `LabCard.vue`, 3 états (`locked` / `wip` / `live`), rendu conditionnel via `<component :is="isClickable ? RouterLink : 'div'">`.
 
 ---
 
 ## 🎮 Architecture d'un jeu
 
-Chaque jeu suit le même découpage à 3 niveaux :
+### Jeux solo (front uniquement)
 
 ```
-Route (router/index.ts)
-  → meta: { layout: 'game', title, description }
-  → pointe vers /views/games/<Jeu>View.vue
-
-Vue (views/games/<Jeu>View.vue)
-  → point d'entrée minimal, importe et affiche le composant du jeu
-
-Composant (components/games/<jeu>/<Jeu>Game.vue)
-  → UI du jeu (template + style), utilise le composable pour l'état/la logique
-
-Composable (composables/games/<jeu>/use<Jeu>.ts)
-  → logique métier pure (state réactif, règles, calculs), aucune manipulation DOM
+Route → meta: { layout: 'game', title, description }
+Vue (views/games/<Jeu>View.vue) → point d'entrée minimal
+Composant (components/games/<jeu>/<Jeu>Game.vue) → UI
+Composable (composables/games/<jeu>/use<Jeu>.ts) → logique pure, sans DOM
 ```
 
-**Layout partagé (`GameLayout.vue`) :** plein écran, topbar fine (marque CraftGuild / titre du jeu / retour au Lab), sans la navbar publique classique — l'espace de jeu prime sur la navigation standard. Le titre/description viennent de `route.meta`, lu directement par le layout.
-
-### Assets statiques (données + images)
-
-Les fichiers référencés **par une URL à l'exécution** (chargés via `fetch`, ou affichés via `<img src>`) vivent dans `/public`, **jamais dans `/src`** — `/src` est exclusivement pour le code compilé/importé par le bundler.
-
+Assets statiques référencés par URL (fetch, `<img>`) → `/public`, jamais `/src` :
 ```
-public/
-  data/games/<jeu>/<jeu>.json     → données chargées via fetch()
-  images/games/<jeu>/*.svg        → images référencées par chemin dans les données
+public/data/games/<jeu>/<jeu>.json
+public/images/games/<jeu>/*.svg
 ```
 
-Exemple (Flags) :
+**Hangman, Tables, Flags** suivent ce modèle. Flags est le plus complexe : chargement JSON asynchrone, options à choix multiples restreintes au continent de la question courante.
+
+### Jeux multijoueurs (front + backend)
+
+Premier exemple : **TicTacToe**. Diffère structurellement des jeux solo — nécessite un état partagé entre deux clients, donc une vraie source de vérité côté serveur.
+
 ```
-public/data/games/flags/flags.json
-public/images/games/flags/al.svg
+Backend (backend/src/routes/<jeu>.ts)
+  → table D1 dédiée (ex: tictactoe_sessions)
+  → endpoints : create / join / get (état) / move / rematch
+  → toute la logique de jeu (validation du tour, calcul du gagnant)
+    tourne côté serveur — jamais fait confiance au client
+
+Frontend (composables/games/<jeu>/use<Jeu>.ts)
+  → gère la session (créer / rejoindre via code ou ?code= dans l'URL)
+  → polling HTTP régulier (setInterval, ~1.5s) vers GET /:code
+    pour récupérer l'état à jour
+  → mise à jour optimiste locale sur les actions (ex: un coup joué
+    s'affiche immédiatement, confirmé/corrigé au poll suivant)
 ```
-Le JSON référence ses images en chemin absolu depuis la racine : `"/images/games/flags/al.svg"`.
 
-### Jeux portés
+**Partage de session** : un code court (6 caractères, alphabet sans caractères ambigus type 0/O ou 1/I) sert à la fois d'identifiant de partie et de paramètre d'URL (`/lab/tictactoe?code=XXXXXX`). Ouvrir ce lien déclenche automatiquement un `join`.
 
-**Hangman** (`useHangman.ts` + `HangmanGame.vue`) — état simple (mot, lettres, erreurs), aucun asset externe.
+**Pourquoi polling plutôt que WebSocket** : plus simple à mettre en œuvre sur Cloudflare Workers sans infrastructure supplémentaire (Durable Objects). Suffisant pour un jeu au tour par tour à faible fréquence d'action. À reconsidérer si un futur jeu nécessite une synchronisation temps réel plus fine.
 
-**Tables** (`useTables.ts` + `TablesGame.vue`) — 3 écrans (menu / jeu / fin), 2 modes (chrono 60s / zen 20 questions), système de streak.
+---
 
-**Flags** (`useFlags.ts` + `FlagsGame.vue`) — le plus complexe : chargement JSON asynchrone (`fetch('/data/games/flags/flags.json')`), sélection continents + difficulté, génération d'options à choix multiples **restreinte au continent de la question courante** (pour éviter des mauvaises réponses hors-sujet), timer, système de rank.
+## 🗄️ Migrations D1
+
+Fichiers numérotés séquentiellement dans `backend/migrations/`, jamais modifiés une fois **réellement appliqués** sur un environnement partagé (remote/prod). Local et remote ont des historiques de migrations indépendants (`wrangler d1 migrations list DB --local|--remote`).
+
+**En développement local actif (avant toute vraie donnée en jeu)**, il est acceptable de renommer/corriger une migration pas encore poussée en remote, à condition de réinitialiser la base locale ensuite (`Remove-Item -Recurse -Force .wrangler` puis `npm run db:dev`) pour repartir d'un historique propre.
+
+**Une fois qu'une migration existe en remote** (même juste "en attente", listée par `wrangler d1 migrations list --remote`), le fichier local doit rester synchronisé avec ce que remote attend — sinon on ajoute une nouvelle migration corrective (ex: `ALTER TABLE ... RENAME TO ...`) plutôt que d'éditer l'historique.
+
+```
+0001_init.sql          → table messages (test/dashboard)
+0002_tictactoe.sql      → table tictactoe_sessions
+```
 
 ---
 
 ## ⚙️ Backend (Cloudflare Workers)
 
-Stack : Cloudflare Workers, Hono. API légère (test d'endpoints, stockage expérimental, support futur du Lab).
+Stack : Cloudflare Workers, Hono.
+
+```
+backend/src/
+  index.ts              → montage des routes (app.route(...)), CORS
+  routes/
+    tictactoe.ts         → logique complète du jeu multijoueur
+```
+
+CORS actuellement permissif (`origin: "*"`) — à restreindre au domaine de prod une fois le site stabilisé (Phase 5).
 
 ```
 GET    /api/hello
 GET    /api/messages
 POST   /api/messages
 DELETE /api/messages
+POST   /api/tictactoe/create
+POST   /api/tictactoe/:code/join
+GET    /api/tictactoe/:code
+POST   /api/tictactoe/:code/move
+POST   /api/tictactoe/:code/rematch
 ```
 
 ---
@@ -188,39 +171,45 @@ DELETE /api/messages
 ## 🗄️ Database (D1)
 
 ```sql
+-- messages (test)
 id INTEGER PRIMARY KEY AUTOINCREMENT
 text TEXT NOT NULL
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-```
 
-Usage : guestbook experiment, API testing layer.
-
----
-
-## 🔌 Data Flow
-
-```
-Frontend → API → D1
+-- tictactoe_sessions
+code TEXT PRIMARY KEY
+board TEXT NOT NULL DEFAULT '["","","","","","","","",""]'
+current_player TEXT NOT NULL DEFAULT 'X'
+player_x_joined INTEGER NOT NULL DEFAULT 1
+player_o_joined INTEGER NOT NULL DEFAULT 0
+status TEXT NOT NULL DEFAULT 'waiting'
+winner TEXT
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ```
 
 ---
 
 ## 🚀 Deployment
 
-**Frontend** — Cloudflare Pages, build via Vite
-**Backend** — Cloudflare Workers, déploiement via Wrangler
+**Frontend** — Cloudflare Pages, build Vite (utilise `.env.production` pour `VITE_API_URL`)
+**Backend** — Cloudflare Workers via Wrangler
+
+```bash
+npm run init-prod   # db:prod (migrations remote) puis deploy
+```
 
 ---
 
 ## 🧠 Key Design Decisions
 
-- SPA architecture pour la simplicité
-- Component-first UI design
-- Design system entièrement variabilisé (tokens) plutôt que valeurs codées en dur
-- Nommage technique en anglais, contenu affiché en français — séparation stricte
-- Logique de jeu portée en composables purs (testables, indépendants du DOM et de l'affichage)
+- SPA architecture, component-first UI design
+- Design system entièrement variabilisé (tokens)
+- Nommage technique anglais / contenu affiché français
+- Logique de jeu portée en composables purs (testables, sans DOM)
 - Assets statiques (`/public`) strictement séparés du code compilé (`/src`)
-- Lab-first mindset (expériences avant contenu)
+- Validation métier des jeux multijoueurs faite côté serveur, jamais côté client seul
+- URL d'API pilotée par variable d'environnement, jamais en dur
 
 ---
 
@@ -228,6 +217,6 @@ Frontend → API → D1
 
 - UI System / Design tokens : ✅ stable v1
 - Système de thèmes : ✅ fonctionnel (6 presets)
-- Lab system : ⚙️ en développement actif — 3 jeux portés (Hangman, Tables, Flags), 2 restants (Morpion, Boîte à idées)
-- Backend API : ⚙️ expérimental mais stable
+- Lab system : ⚙️ 4 jeux portés (Hangman, Tables, Flags, TicTacToe), 1 restant (Boîte à idées)
+- Backend API : ✅ stable, premier vrai cas d'usage serveur (sessions multijoueur) en place
 - Admin dashboard : ❌ non implémenté (hors scope actuel)

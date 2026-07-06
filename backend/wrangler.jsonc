@@ -18,4 +18,20 @@
       "database_id": "c7c2ae3a-173f-4f81-bf19-02c5dedb9688"
     }
   ],
+
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "QUICKDRAW_ROOM",
+        "class_name": "QuickdrawRoom"
+      }
+    ]
+  },
+
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["QuickdrawRoom"]
+    }
+  ]
 }

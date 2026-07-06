@@ -39,7 +39,14 @@ const items = [
     desc: "Affronte tes amis.",
     link: "/lab/tictactoe",
     tag: "live"
-  }
+  },
+  {
+    icon: "⚡",
+    title: "QuickDraw",
+    desc: "Sois le plus rapide à réagir au signal, entre potes.",
+    link: "/lab/quickdraw",
+    tag: "wip"
+  },
 ]
 </script>
 

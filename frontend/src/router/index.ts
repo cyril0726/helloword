@@ -7,6 +7,7 @@ import Pendu from '../views/games/HangmanView.vue'
 import Tables from '../views/games/TablesView.vue'
 import Flags from '../views/games/FlagsView.vue'
 import Tictactoe from '../views/games/TictactoeView.vue'
+import Quickdraw from '../views/games/QuickdrawView.vue'
 
 const routes = [
   {
@@ -25,7 +26,7 @@ const routes = [
     meta: {
     layout: 'game',
     title: 'Pendu',
-  }
+    }
   },
   {
     path: '/lab/tables',
@@ -41,6 +42,11 @@ const routes = [
     path: '/lab/tictactoe',
     component: Tictactoe,
     meta: { layout: 'game' }
+  },
+  {
+    path: '/lab/quickdraw',
+    component: Quickdraw,
+    meta: { layout: 'game', title: 'QuickDraw', description: 'Sois le plus rapide à réagir au signal.' }
   },
   {
     path: '/about',
