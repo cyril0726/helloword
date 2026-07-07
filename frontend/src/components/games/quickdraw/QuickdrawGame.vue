@@ -1,47 +1,82 @@
 <template>
   <div class="quickdraw-game">
-    <!-- SETUP -->
-    <div v-if="screen === 'setup'" class="qd-screen">
-      <h2 class="qd-heading">QuickDraw</h2>
-      <p class="qd-sub">Sois le plus rapide à réagir au signal.</p>
+<!-- SETUP -->
+<div v-if="screen === 'setup'" class="qd-screen">
+  
+  <h2 class="qd-heading">QuickDraw</h2>
 
+  <!-- MODE INVITE -->
+  <template v-if="isInviteMode">
+    <p class="qd-sub">🎯 Invitation reçue</p>
+
+    <p class="qd-code">
+      Code : <strong>{{ joinCode }}</strong>
+    </p>
+
+    <input
+      v-model="pseudoInput"
+      type="text"
+      maxlength="20"
+      placeholder="Ton pseudo"
+      class="qd-input"
+      autocomplete="off"
+    />
+
+    <button
+      class="btn btn--primary"
+      :disabled="loading || !pseudoInput.trim()"
+      @click="handleJoin"
+    >
+      Rejoindre la partie
+    </button>
+    <button class="qd-link-alt" @click="codeFromUrl = null">
+      Créer ma propre partie à la place
+    </button>
+  </template>
+
+  <!-- MODE NORMAL -->
+  <template v-else>
+    <p class="qd-sub">Sois le plus rapide à réagir au signal.</p>
+
+    <input
+      v-model="pseudoInput"
+      type="text"
+      maxlength="20"
+      placeholder="Ton pseudo"
+      class="qd-input"
+      autocomplete="off"
+    />
+
+    <button
+      class="btn btn--primary"
+      :disabled="loading || !pseudoInput.trim()"
+      @click="handleCreate"
+    >
+      Créer une partie
+    </button>
+
+    <p class="qd-or">ou</p>
+
+    <form class="join-form" @submit.prevent="handleJoin">
       <input
-        v-model="pseudoInput"
+        v-model="joinCode"
         type="text"
-        maxlength="20"
-        placeholder="Ton pseudo"
+        maxlength="6"
+        placeholder="Code de partie"
         class="qd-input"
         autocomplete="off"
       />
-
-      <button
-        class="btn btn--primary"
-        :disabled="loading || !pseudoInput.trim()"
-        @click="handleCreate"
-      >
-        Créer une partie
+      <button type="submit" class="btn" :disabled="loading || !joinCode || !pseudoInput.trim()">
+        Rejoindre
       </button>
+    </form>
+  </template>
 
-      <p class="qd-or">ou</p>
+  <Transition name="toast">
+    <p v-if="message" class="qd-toast">{{ message }}</p>
+  </Transition>
 
-      <form class="join-form" @submit.prevent="handleJoin">
-        <input
-          v-model="joinCode"
-          type="text"
-          maxlength="6"
-          placeholder="Code de partie"
-          class="qd-input"
-          autocomplete="off"
-        />
-        <button type="submit" class="btn" :disabled="loading || !joinCode || !pseudoInput.trim()">
-          Rejoindre
-        </button>
-      </form>
-
-      <Transition name="toast">
-        <p v-if="message" class="qd-toast">{{ message }}</p>
-      </Transition>
-    </div>
+</div>
 
     <!-- LOBBY -->
     <div v-else-if="screen === 'lobby'" class="qd-screen">
@@ -154,11 +189,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuickdraw } from '@/composables/games/quickdraw/useQuickdraw'
 
 const route = useRoute()
+const isInviteMode = computed(() => !!codeFromUrl.value)
+const codeFromUrl = ref<string | null>(null)
 
 const {
   screen,
@@ -192,8 +229,11 @@ const pseudoInput = ref('')
 const joinCode = ref('')
 
 onMounted(() => {
-  const codeFromUrl = route.query.code as string | undefined
-  if (codeFromUrl) joinCode.value = codeFromUrl.toUpperCase()
+  const fromQuery = route.query.code as string | undefined
+  if (fromQuery) {
+    codeFromUrl.value = fromQuery.toUpperCase()
+    joinCode.value = fromQuery.toUpperCase()
+  }
 })
 
 function handleCreate() {
@@ -302,6 +342,15 @@ async function copyLink() {
 .qd-code {
   font-size: 13px;
   color: var(--text-muted);
+}
+
+.qd-link-alt {
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .qd-code strong {
