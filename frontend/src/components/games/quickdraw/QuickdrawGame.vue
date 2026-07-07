@@ -129,8 +129,13 @@
     <div v-else-if="screen === 'round_live'" class="qd-screen">
       <p class="qd-round-label">Manche {{ currentRound }}/{{ maxRounds }}</p>
 
-      <button class="qd-signal qd-signal--go" @click="click">
-        CLIQUE !
+      <button
+        class="qd-signal"
+        :class="roundFaulted ? 'qd-signal--faulted' : 'qd-signal--go'"
+        :disabled="roundFaulted"
+        @click="click"
+      >
+        {{ roundFaulted ? 'Trop tôt !' : 'CLIQUE !' }}
       </button>
 
       <ul class="live-clicks">
