@@ -9,6 +9,18 @@
   box-sizing: border-box;
 }
 
+/* 🐛 CORRIGÉ (régression post-nettoyage) : ce reset margin/padding sur
+   html/body vivait aussi dans l'ancien style.css et avait été oublié
+   lors de la récupération de ses règles utiles. Sans lui, la marge par
+   défaut du navigateur sur <body> (~8px) s'ajoutait au-dessus de
+   .public-layout { min-height: 100vh }, poussant le contenu au-delà de
+   la fenêtre visible et provoquant un ascenseur vertical sur toutes les
+   pages. */
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
