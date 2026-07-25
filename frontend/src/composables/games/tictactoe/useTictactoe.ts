@@ -146,7 +146,13 @@ export function useTictactoe() {
     }
     if (board.value[index] !== '') return
 
-    // mise à jour optimiste locale, confirmée/corrigée au prochain poll
+    // Mise à jour optimiste locale (affichage immédiat du coup avant même
+    // la réponse serveur, pour éviter toute latence perçue). Le GET
+    // immédiat juste après (plutôt que d'attendre le prochain tick de
+    // polling, jusqu'à 1.5s plus tard) sert précisément à corriger vite
+    // cet affichage optimiste si jamais le serveur refusait le coup —
+    // fenêtre d'incohérence potentielle très courte (le temps d'un
+    // aller-retour réseau), pas totalement nulle mais réduite au minimum.
     board.value[index] = role.value
 
     await apiCall(`/${code.value}/move`, {
@@ -175,6 +181,12 @@ export function useTictactoe() {
     router.replace({ query: {} })
   }
 
+  // Auto-join dès qu'un ?code= est présent dans l'URL, SANS confirmation
+  // intermédiaire — différent du choix fait sur QuickDraw (écran "mode
+  // invité" séparé, qui demande d'abord un pseudo). Ici, aucun pseudo
+  // n'est nécessaire (juste un rôle X/O attribué automatiquement), donc
+  // rien ne justifie une étape de confirmation avant de rejoindre : le
+  // clic sur le lien partagé suffit à lancer la connexion.
   onMounted(async () => {
     const codeFromUrl = route.query.code as string | undefined
     if (codeFromUrl) {

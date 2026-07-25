@@ -15,6 +15,18 @@
   border-color: var(--accent);
 }
 
+/* 🐛 AJOUTÉ : cette règle était prévue ici dès la conception initiale
+   (pour que toute future carte .is-hoverable en profite automatiquement,
+   pas seulement LabCard), mais n'avait jamais été ajoutée — elle a fini
+   par être dupliquée localement dans LabCard.vue (.lab-card:focus-visible)
+   à la place. Ajoutée ici comme prévu à l'origine ; la version locale de
+   LabCard.vue reste redondante mais sans conflit (les deux s'appliquent). */
+.card.is-hoverable:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
 /*BUTTON SYSTEM*/
 .btn {
   display: inline-flex;
@@ -39,6 +51,13 @@
 .btn--primary {
   background: var(--accent);
   border-color: var(--accent);
+  /* #fff codé en dur, pas de token dédié "texte sur accent" (--on-accent)
+     — repose sur l'hypothèse que les 6 presets d'accent actuels (slate,
+     sage, brass, coral, violet, cyan) sont tous assez foncés/saturés
+     pour qu'un texte blanc reste lisible dessus. Vrai pour la palette
+     actuelle, mais à vérifier si un futur preset plus clair est ajouté —
+     un vrai token --on-accent serait alors plus robuste que cette
+     hypothèse implicite. */
   color: #fff;
   font-weight: 600;
 }

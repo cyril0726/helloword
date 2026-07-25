@@ -92,6 +92,10 @@ export function useTables() {
     }
   }
 
+  // Pioche une question au hasard parmi les tables sélectionnées — aucune
+  // protection contre une répétition immédiate de la même question (t, m)
+  // deux fois de suite, comportement volontairement simple (comme
+  // choisirMot() dans useHangman, non traité comme un bug).
   function nextQuestion() {
     if (mode.value === 'zen' && questionsAsked.value >= MAX_QUESTIONS) {
       endGame()
@@ -139,6 +143,16 @@ export function useTables() {
     screen.value = 'end'
   }
 
+  // ⚠️ INCOHÉRENCE avec useFlags.restartQuiz() : ici, "Rejouer" (bouton
+  // dans TablesGame.vue) vide tables.value et ramène à l'écran 'menu' —
+  // l'utilisateur doit tout resélectionner (tables + mode). Dans Flags,
+  // le même intitulé de bouton relance directement une partie avec les
+  // MÊMES continents/difficulté déjà choisis, sans repasser par l'écran
+  // de sélection. Peut-être volontaire ici (les tables changent souvent
+  // d'une partie à l'autre, contrairement aux continents qu'on garde
+  // plus logiquement d'une manche à l'autre), mais à trancher
+  // explicitement — sinon "Rejouer" désigne deux comportements
+  // différents selon le jeu.
   function restart() {
     tables.value = []
     resetStats()

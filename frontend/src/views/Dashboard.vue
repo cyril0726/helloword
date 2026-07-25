@@ -1,5 +1,12 @@
 <template>
-  <div class="page">
+  <!-- 🐛 CORRIGÉ : renommé "page" → "dashboard-page" pour éviter la
+       collision avec .page de global.css (même nom, mais rôles opposés :
+       le .page global impose max-width:1100px + padding 64px pensés pour
+       les pages publiques, propriétés que ce fichier ne redéfinissait
+       pas et qui continuaient donc de s'appliquer ici malgré le style
+       scopé — la spécificité de Vue Scoped joue par PROPRIÉTÉ, pas par
+       règle entière). -->
+  <div class="dashboard-page">
     <div class="container">
 
       <TopStatusBar />
@@ -43,6 +50,13 @@ const api = ref<"loading" | "ok" | "error">("loading");
 const db = ref<"loading" | "ok" | "error">("loading");
 const latency = ref(0);
 
+// ⚠️ Si le fetch /api/health réussit (api/db correctement renseignés)
+// mais que le fetch /api/messages juste après échoue (coupure réseau
+// entre-temps), le catch global ci-dessous repasse api ET db à "error"
+// — écrasant un diagnostic déjà correct obtenu un instant plus tôt. Les
+// deux fetches ne sont pas isolés l'un de l'autre pour la gestion
+// d'erreur. Non corrigé pour l'instant (nécessiterait deux try/catch
+// séparés, changement de logique plutôt que nettoyage cosmétique).
 async function refreshAll() {
   const start = performance.now();
 
@@ -66,13 +80,13 @@ onMounted(refreshAll);
 </script>
 
 <style scoped>
-.page {
+.dashboard-page {
   width: 100%;
   height: 100%;
   display: block;
 
-  background: #0a0a0a;
-  color: #e5e7eb;
+  background: var(--bg);
+  color: var(--text);
   font-family: monospace;
 }
 
@@ -80,31 +94,34 @@ onMounted(refreshAll);
 .container {
   width: 100%;
   max-width: 900px;
+  /* 🐛 CORRIGÉ : margin: auto manquant — max-width seul ne centre rien,
+     le contenu restait collé à gauche plutôt que centré. */
+  margin: 0 auto;
 }
 
 /* PANEL CARD */
 .panel {
-  padding: 6px;
+  padding: var(--space-2);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-2);
 
-  background: #0f172a;
-  border: 1px solid #1f2937;
-  border-radius: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
 }
 
 /* STATUS LINE */
 .line {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--space-2);
   font-size: 12px;
   opacity: 0.95;
 }
 
 .label {
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 /* STATUS BADGES */
@@ -113,15 +130,15 @@ onMounted(refreshAll);
 }
 
 .ok {
-  color: #22c55e;
+  color: var(--status-live);
 }
 
 .error {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .loading {
-  color: #f59e0b;
+  color: var(--status-wip);
 }
 
 /* ACTIONS */
@@ -133,14 +150,14 @@ onMounted(refreshAll);
 button {
   padding: 2px 6px;
   font-size: 11px;
-  background: #111827;
-  border: 1px solid #1f2937;
-  color: #e5e7eb;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 button:hover {
-  background: #1f2937;
+  background: var(--border);
 }
 </style>

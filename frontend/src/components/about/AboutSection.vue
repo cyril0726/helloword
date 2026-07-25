@@ -2,6 +2,13 @@
   <section class="about page">
     <div class="card about-card">
       <div class="about-header">
+        <!-- Sceau "CG" : identité visuelle de la marque, distincte du rôle
+             du hero (qui évoque le contenu du Lab, pas la marque elle-même
+             — voir /docs/Architecture.md, section "Signature visuelle").
+             Ce SVG est inline ici uniquement — jamais extrait en composant
+             réutilisable (ex: LogoSeal.vue), alors qu'on l'avait envisagé
+             à un moment. Candidat à factoriser si on veut le réutiliser
+             ailleurs (navbar, favicon...) sans dupliquer le SVG. -->
         <div class="avatar">
           <svg viewBox="0 0 100 100" class="seal">
             <polygon
@@ -35,6 +42,14 @@
         Objectif : construire, tester et itérer sur des idées de jeux, d'outils et de micro-expériences.
       </p>
 
+      <!-- ⚠️ Chiffres codés en dur, jamais recalculés automatiquement.
+           "4+ Jeux" est déjà obsolète (5 jeux en ligne actuellement :
+           Hangman, Tables, Flags, TicTacToe, QuickDraw). "10+" et "∞"
+           sont volontairement approximatifs/décoratifs (pas censés
+           représenter un vrai compte), mais le nombre de jeux, lui,
+           mériterait d'être tenu à jour à chaque ajout — ou calculé
+           dynamiquement depuis la liste des jeux du Lab plutôt que
+           recopié manuellement ici (voir ExplorerGrid.vue). -->
       <div class="stats">
         <div><strong>10+</strong><span>Projets</span></div>
         <div><strong>4+</strong><span>Jeux</span></div>
@@ -45,6 +60,7 @@
 </template>
 
 <script setup>
+// Aucune logique : page entièrement statique (texte + SVG inline).
 </script>
 
 <style scoped>
@@ -94,6 +110,9 @@
   margin-bottom: var(--space-2);
 }
 
+/* Bloc stats : séparé visuellement du texte par une bordure supérieure,
+   cohérent avec le style "carte posée" du reste de la DA (pas de glow,
+   juste une séparation nette). */
 .stats {
   display: flex;
   gap: var(--space-4);

@@ -1,6 +1,8 @@
 <template>
   <div class="hangman">
-    <!-- Silhouette du pendu -->
+    <!-- Silhouette du pendu : potence fixe (toujours visible) + 6 parties
+         (tête, corps, 2 bras, 2 jambes) révélées progressivement selon le
+         nombre d'erreurs, via partStyle() ci-dessous -->
     <div class="hangman-figure" :class="{ shake }">
       <svg viewBox="0 0 100 120" class="hangman-svg">
         <!-- potence (toujours visible) -->
@@ -25,15 +27,16 @@
       </svg>
     </div>
 
-    <!-- Mot à deviner -->
+    <!-- Mot à deviner (lettres trouvées + "_" pour les manquantes, calculé
+         dans le composable) -->
     <p class="hangman-word">{{ motAffiche }}</p>
 
-    <!-- Compteur d'erreurs -->
+    <!-- Compteur d'erreurs, passe en couleur danger à partir de 4 -->
     <p class="hangman-errors" :class="{ 'hangman-errors--danger': erreurs >= 4 }">
       Erreurs : {{ erreurs }}/{{ maxErreurs }}
     </p>
 
-    <!-- Lettres déjà utilisées -->
+    <!-- Lettres déjà utilisées (bonnes et mauvaises confondues) -->
     <p v-if="lettresUtilisees.length" class="hangman-used">
       {{ lettresUtilisees.join(' • ') }}
     </p>
@@ -55,7 +58,7 @@
       </button>
     </form>
 
-    <!-- Toast / message -->
+    <!-- Toast / message (lettre invalide, déjà jouée, victoire/défaite) -->
     <Transition name="toast">
       <p v-if="message" class="hangman-toast">{{ message }}</p>
     </Transition>
@@ -81,6 +84,9 @@ const {
 const input = ref('')
 const inputRef = ref<HTMLInputElement | null>(null)
 
+// Calcule l'opacité/échelle d'une partie du pendu (0 = tête ... 5 = dernière
+// jambe) selon le nombre d'erreurs actuel — une partie apparaît dès que
+// erreurs.value dépasse son index, avec une petite transition douce.
 function partStyle(index: number) {
   const visible = index < erreurs.value
   return {
@@ -94,6 +100,9 @@ function partStyle(index: number) {
 function submitLetter() {
   verifierLettre(input.value)
   input.value = ''
+  // Attend le prochain tick (après que Vue ait fini de re-render) avant
+  // de refocus, sinon le focus pourrait être perdu si le champ est
+  // momentanément désactivé (ex: jeu terminé) pendant le re-render.
   nextTick(() => inputRef.value?.focus())
 }
 
@@ -102,6 +111,7 @@ onMounted(() => {
   inputRef.value?.focus()
 })
 </script>
+
 
 <style scoped>
 .hangman {
@@ -145,7 +155,7 @@ onMounted(() => {
 }
 
 .hangman-errors--danger {
-  color: var(--status-wip);
+  color: var(--danger);
 }
 
 .hangman-used {
@@ -153,7 +163,7 @@ onMounted(() => {
   color: var(--text-faint);
 }
 
-.pendu-form {
+.hangman-form {
   display: flex;
   gap: var(--space-2);
   margin-top: var(--space-2);

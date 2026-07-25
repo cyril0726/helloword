@@ -6,6 +6,10 @@
     <div class="main">
       <Topbar />
 
+      <!-- Reçoit le contenu de page (déjà enveloppé dans sa Transition)
+           depuis App.vue — même mécanisme désormais harmonisé avec
+           PublicLayout.vue et GameLayout.vue, un seul <RouterView> +
+           <Transition> centralisé dans App.vue pour tout le site. -->
       <main class="content">
         <slot />
       </main>
@@ -39,6 +43,6 @@ import Topbar from '@/components/layout/Topbar.vue'
   overflow: auto;
 
   min-height: 0;
-  padding: 24px;
+  padding: var(--space-4);
 }
 </style>

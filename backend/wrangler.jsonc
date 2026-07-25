@@ -1,16 +1,28 @@
+// Fichier de configuration du backend Cloudflare Workers.
+// ⚠️ Ne PAS créer de wrangler.toml en parallèle : si les deux fichiers existent,
+// Wrangler ignore silencieusement le .toml et utilise ce .jsonc — piège vécu
+// une fois lors de l'ajout des Durable Objects (config invisible, aucune erreur).
+
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "helloword-api",
   "main": "src/index.ts",
   "compatibility_date": "2026-06-22",
-  "observability": {
-    "enabled": true
-  },
+
+  // Active les métriques et l'observabilité dans le dashboard Cloudflare
+  "observability": {"enabled": true},
   "upload_source_maps": true,
+
+  // nodejs_compat : nécessaire pour utiliser certaines APIs Node.js
+  // dans le Worker (ex: Buffer, crypto étendu) — sans ça, certains
+  // packages npm standards ne fonctionnent pas sur le runtime Workers.
   "compatibility_flags": [
     "nodejs_compat"
   ],
 
+  // Base D1 (SQLite) accessible dans le Worker via c.env.DB.
+  // Schéma géré par des migrations SQL séquentielles dans /migrations,
+  // jamais modifiées une fois appliquées (voir /docs/Architecture.md).
   "d1_databases": [
     {
       "binding": "DB",
@@ -19,6 +31,10 @@
     }
   ],
 
+  // Durable Objects : une instance = un état serveur persistant (ex: une
+  // salle de jeu QuickDraw). Contrairement à D1, l'état vit en mémoire /
+  // ctx.storage, pas en base relationnelle — utilisé uniquement pour les
+  // jeux nécessitant du temps réel (WebSocket).
   "durable_objects": {
     "bindings": [
       {
@@ -27,7 +43,10 @@
       }
     ]
   },
-
+  
+  // Historique des migrations de CLASSES Durable Objects — système distinct
+  // des migrations D1 ci-dessus, même si le mot "migrations" est le même.
+  // Ici : "quelles classes DO existent et depuis quelle version du schéma".
   "migrations": [
     {
       "tag": "v1",

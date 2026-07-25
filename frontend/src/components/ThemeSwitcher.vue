@@ -1,5 +1,11 @@
 <template>
-  <div class="theme-switcher">
+  <!-- 🐛 CORRIGÉ : ref="root" manquant ici — la ref `root` déclarée dans
+       le script n'était attachée à AUCUN élément, restait donc toujours
+       null. Conséquence : handleClickOutside() ne fermait jamais le
+       panneau au clic extérieur (la condition `root.value && ...` était
+       toujours fausse), fonctionnalité silencieusement cassée depuis sa
+       mise en place initiale malgré l'absence de toute erreur visible. -->
+  <div class="theme-switcher" ref="root">
     <button
       class="theme-trigger"
       @click="open = !open"
@@ -29,6 +35,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
+// ⚠️ Ces couleurs hex sont dupliquées avec les blocs [data-theme="x"] de
+// tokens.css — nécessaire pour afficher un aperçu réel de chaque thème
+// sans avoir à basculer data-theme pour chacun, mais ça crée un risque :
+// si une couleur change dans tokens.css, il faut penser à la répercuter
+// ici aussi, sinon l'aperçu du swatch ne correspondrait plus à la vraie
+// couleur appliquée. Acceptable pour 6 presets statiques, mais à garder
+// en tête si le nombre de thèmes grossit beaucoup.
 const themes = [
   { id: 'slate', label: 'Slate', color: '#6e85a6' },
   { id: 'sage', label: 'Sage', color: '#7a9b7e' },

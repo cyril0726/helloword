@@ -1,3 +1,14 @@
+/* Fondations globales — voir /docs/Architecture.md, couche "global.css".
+   Règles appliquées aux éléments HTML natifs / au conteneur structurel
+   .page, portée large, censé changer rarement. */
+
+/* Reset de base, récupéré depuis l'ancien style.css (scaffold Vite par
+   défaut, supprimé — voir /docs/Architecture.md pour l'historique du
+   bug de police monospace qu'il causait via #app { font-family: monospace }). */
+* {
+  box-sizing: border-box;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -9,4 +20,24 @@ body {
   margin: 0 auto;
   padding: var(--space-6) var(--space-4);
   width: 100%;
+}
+
+/* Transition de page centralisée (voir App.vue, <Transition name="page">
+   qui enveloppe le RouterView partagé par tous les layouts). Ces classes
+   étaient auparavant définies dans l'ancien style.css (scaffold Vite),
+   sans lien apparent avec le reste du design system — récupérées ici,
+   leur vraie place. */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }

@@ -89,6 +89,12 @@ export function useFlags() {
       : `Quelle est la capitale de ${currentQuestion.value.pays} ?`
   })
 
+  // Chemin RELATIF, sans VITE_API_URL — volontaire, contrairement aux
+  // composables de jeux multijoueurs (useTictactoe, useQuickdraw) qui
+  // appellent le backend Worker. Ici, le JSON est un asset STATIQUE servi
+  // par le frontend lui-même (dossier /public, voir /docs/Architecture.md),
+  // pas une donnée qui vit côté serveur — donc pas d'URL de backend à
+  // préfixer, juste un chemin relatif au domaine du site.
   async function loadData() {
     try {
       const res = await fetch('/data/games/flags/flags.json')
@@ -126,7 +132,15 @@ export function useFlags() {
     }, dureeMs)
   }
 
-  // Retrouve le continent d'appartenance d'un pays donné
+  // Retrouve le continent d'appartenance d'un pays donné.
+  // Fonctionne par ÉGALITÉ DE RÉFÉRENCE (Array.includes sur des objets),
+  // pas par comparaison de valeur — ça marche uniquement parce que
+  // currentQuestions.value contient les MÊMES instances d'objets que
+  // data.value.continents[x] (flatMap et shuffle() ne clonent jamais les
+  // Country, ils ne réorganisent/aplatissent que les tableaux qui les
+  // contiennent). Si un jour un clone profond était introduit quelque
+  // part dans la chaîne (ex: JSON.parse(JSON.stringify(...))), cette
+  // fonction cesserait silencieusement de trouver le bon continent.
   function findContinentOf(country: Country): string | null {
     if (!data.value) return null
     for (const [continent, countries] of Object.entries(data.value.continents)) {
@@ -174,6 +188,8 @@ export function useFlags() {
     }, 1000)
   }
 
+  // Chaque pays génère 2 manches consécutives (pays puis capitale) — d'où
+  // la division par 2 : countryIndex avance d'une unité tous les 2 rounds.
   function pickRandomQuestion() {
     const countryIndex = Math.floor(roundsPlayed.value / 2)
     currentQuestion.value = currentQuestions.value[countryIndex]
@@ -181,6 +197,9 @@ export function useFlags() {
   }
 
   // Pioche les fausses réponses uniquement parmi les pays du même continent
+  // que la question courante (voir currentContinent) — empêche des
+  // mauvaises réponses hors-sujet (ex: un pays d'Asie proposé alors que
+  // la question porte sur l'Europe).
   function generateOptions(correct: string, key: 'pays' | 'capitale') {
     const opts = [correct]
 
@@ -264,6 +283,10 @@ export function useFlags() {
     screen.value = 'end'
   }
 
+  // Rejoue avec les MÊMES continents/difficulté déjà choisis (pas de reset
+  // de selectedContinents/selectedDifficulty ici, contrairement à
+  // backToContinentSelection ci-dessous) — juste un nouveau tirage/mélange
+  // sur le même pool de pays.
   function restartQuiz() {
     screen.value = 'quiz'
     startQuizFromSelection()

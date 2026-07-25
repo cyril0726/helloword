@@ -1,84 +1,96 @@
 <template>
   <div class="quickdraw-game">
-<!-- SETUP -->
-<div v-if="screen === 'setup'" class="qd-screen">
-  
-  <h2 class="qd-heading">QuickDraw</h2>
+    <!-- SETUP : deux sous-modes distincts selon la provenance du joueur -->
+    <div v-if="screen === 'setup'" class="qd-screen">
+      <h2 class="qd-heading">QuickDraw</h2>
 
-  <!-- MODE INVITE -->
-  <template v-if="isInviteMode">
-    <p class="qd-sub">🎯 Invitation reçue</p>
+      <!-- MODE INVITE : arrivée via un lien partagé (?code=... dans l'URL).
+           Le code est déjà connu, on ne demande que le pseudo — voir
+           /docs/Architecture.md pour le choix de séparer ce flow du mode
+           normal plutôt que d'afficher "Créer" et "Rejoindre" en même
+           temps à quelqu'un qui a clairement l'intention de rejoindre.
 
-    <p class="qd-code">
-      Code : <strong>{{ joinCode }}</strong>
-    </p>
+           🐛 CORRIGÉ : ce bloc n'était pas enveloppé dans un <form>,
+           contrairement au mode normal ci-dessous — taper Entrée après
+           le pseudo ne déclenchait rien, il fallait cliquer. Enveloppé
+           maintenant dans un <form @submit.prevent="handleJoin"> pour
+           un comportement cohérent entre les deux modes. -->
+      <template v-if="isInviteMode">
+        <p class="qd-sub">🎯 Invitation reçue</p>
 
-    <input
-      v-model="pseudoInput"
-      type="text"
-      maxlength="20"
-      placeholder="Ton pseudo"
-      class="qd-input"
-      autocomplete="off"
-    />
+        <p class="qd-code">
+          Code : <strong>{{ joinCode }}</strong>
+        </p>
 
-    <button
-      class="btn btn--primary"
-      :disabled="loading || !pseudoInput.trim()"
-      @click="handleJoin"
-    >
-      Rejoindre la partie
-    </button>
-    <button class="qd-link-alt" @click="codeFromUrl = null">
-      Créer ma propre partie à la place
-    </button>
-  </template>
+        <form class="invite-form" @submit.prevent="handleJoin">
+          <input
+            v-model="pseudoInput"
+            type="text"
+            maxlength="20"
+            placeholder="Ton pseudo"
+            class="qd-input"
+            autocomplete="off"
+          />
 
-  <!-- MODE NORMAL -->
-  <template v-else>
-    <p class="qd-sub">Sois le plus rapide à réagir au signal.</p>
+          <button
+            type="submit"
+            class="btn btn--primary"
+            :disabled="loading || !pseudoInput.trim()"
+          >
+            Rejoindre la partie
+          </button>
+        </form>
 
-    <input
-      v-model="pseudoInput"
-      type="text"
-      maxlength="20"
-      placeholder="Ton pseudo"
-      class="qd-input"
-      autocomplete="off"
-    />
+        <button class="qd-link-alt" @click="codeFromUrl = null">
+          Créer ma propre partie à la place
+        </button>
+      </template>
 
-    <button
-      class="btn btn--primary"
-      :disabled="loading || !pseudoInput.trim()"
-      @click="handleCreate"
-    >
-      Créer une partie
-    </button>
+      <!-- MODE NORMAL : ni code ni intention précise, on propose les deux
+           options (créer ou rejoindre via un code tapé à la main) -->
+      <template v-else>
+        <p class="qd-sub">Sois le plus rapide à réagir au signal.</p>
 
-    <p class="qd-or">ou</p>
+        <input
+          v-model="pseudoInput"
+          type="text"
+          maxlength="20"
+          placeholder="Ton pseudo"
+          class="qd-input"
+          autocomplete="off"
+        />
 
-    <form class="join-form" @submit.prevent="handleJoin">
-      <input
-        v-model="joinCode"
-        type="text"
-        maxlength="6"
-        placeholder="Code de partie"
-        class="qd-input"
-        autocomplete="off"
-      />
-      <button type="submit" class="btn" :disabled="loading || !joinCode || !pseudoInput.trim()">
-        Rejoindre
-      </button>
-    </form>
-  </template>
+        <button
+          class="btn btn--primary"
+          :disabled="loading || !pseudoInput.trim()"
+          @click="handleCreate"
+        >
+          Créer une partie
+        </button>
 
-  <Transition name="toast">
-    <p v-if="message" class="qd-toast">{{ message }}</p>
-  </Transition>
+        <p class="qd-or">ou</p>
 
-</div>
+        <form class="join-form" @submit.prevent="handleJoin">
+          <input
+            v-model="joinCode"
+            type="text"
+            maxlength="6"
+            placeholder="Code de partie"
+            class="qd-input"
+            autocomplete="off"
+          />
+          <button type="submit" class="btn" :disabled="loading || !joinCode || !pseudoInput.trim()">
+            Rejoindre
+          </button>
+        </form>
+      </template>
 
-    <!-- LOBBY -->
+      <Transition name="toast">
+        <p v-if="message" class="qd-toast">{{ message }}</p>
+      </Transition>
+    </div>
+
+    <!-- LOBBY : salle d'attente, partage du lien, liste des joueurs connectés -->
     <div v-else-if="screen === 'lobby'" class="qd-screen">
       <h2 class="qd-heading">Salle d'attente</h2>
 
@@ -97,6 +109,9 @@
         </li>
       </ul>
 
+      <!-- Seul l'hôte peut lancer, et seulement s'il y a au moins 2 joueurs
+           (garde-fou côté frontend — le backend n'empêche pas explicitement
+           une manche à 1 seul joueur, voir QuickdrawRoom.ts) -->
       <button
         v-if="isHost"
         class="btn btn--primary"
@@ -112,7 +127,10 @@
       </Transition>
     </div>
 
-    <!-- ROUND PENDING (attente du signal) -->
+    <!-- ROUND PENDING : attente du signal. Un clic ici = faute (voir
+         useQuickdraw / QuickdrawRoom.ts), le bouton reste cliquable pour
+         permettre ce test/cette faute, contrairement à round_live où un
+         joueur déjà en faute voit son bouton désactivé. -->
     <div v-else-if="screen === 'round_pending'" class="qd-screen">
       <p class="qd-round-label">Manche {{ currentRound }}/{{ maxRounds }}</p>
 
@@ -125,7 +143,9 @@
       </button>
     </div>
 
-    <!-- ROUND LIVE (le signal est là) -->
+    <!-- ROUND LIVE : le signal "go" est arrivé. Un joueur déjà en faute
+         (roundFaulted) garde un bouton désactivé, il ne doit plus pouvoir
+         re-cliquer même si le signal apparaît. -->
     <div v-else-if="screen === 'round_live'" class="qd-screen">
       <p class="qd-round-label">Manche {{ currentRound }}/{{ maxRounds }}</p>
 
@@ -138,6 +158,8 @@
         {{ roundFaulted ? 'Trop tôt !' : 'CLIQUE !' }}
       </button>
 
+      <!-- Diffusion "live" des clics des autres joueurs, au fur et à
+           mesure qu'ils arrivent (pas d'attente de la fin de manche) -->
       <ul class="live-clicks">
         <li v-for="c in liveClicks" :key="c.pseudo">
           {{ c.pseudo }} — {{ c.reactionMs }}ms
@@ -145,18 +167,18 @@
       </ul>
     </div>
 
-    <!-- ROUND RESULT -->
+    <!-- ROUND RESULT : classement de la manche + points gagnés + scores cumulés -->
     <div v-else-if="screen === 'round_result'" class="qd-screen">
       <h2 class="qd-heading">Manche {{ currentRound }}/{{ maxRounds }}</h2>
 
-    <ol class="ranking-list">
-      <li v-for="(entry, i) in lastRoundRanking" :key="entry.pseudo" class="ranking-item">
-        <span class="ranking-pos">{{ i + 1 }}</span>
-        {{ entry.pseudo }}
-        <span class="ranking-time">{{ entry.reactionMs }}ms</span>
-        <span class="ranking-points">+{{ pointsForRank(i) }}</span>
-      </li>
-    </ol>
+      <ol class="ranking-list">
+        <li v-for="(entry, i) in lastRoundRanking" :key="entry.pseudo" class="ranking-item">
+          <span class="ranking-pos">{{ i + 1 }}</span>
+          {{ entry.pseudo }}
+          <span class="ranking-time">{{ entry.reactionMs }}ms</span>
+          <span class="ranking-points">+{{ pointsForRank(i) }}</span>
+        </li>
+      </ol>
 
       <p v-if="lastRoundFaults.length" class="qd-faults">
         Faute(s) : {{ lastRoundFaults.join(', ') }}
@@ -174,7 +196,7 @@
       <p v-else class="qd-hint">En attente de l'hôte…</p>
     </div>
 
-    <!-- GAME OVER -->
+    <!-- GAME OVER : classement final -->
     <div v-else class="qd-screen">
       <h2 class="qd-heading">Partie terminée !</h2>
 
@@ -199,8 +221,12 @@ import { useRoute } from 'vue-router'
 import { useQuickdraw } from '@/composables/games/quickdraw/useQuickdraw'
 
 const route = useRoute()
-const isInviteMode = computed(() => !!codeFromUrl.value)
+
+// codeFromUrl déclaré avant isInviteMode qui le référence — fonctionnait
+// dans les deux ordres grâce à l'évaluation paresseuse des computed, mais
+// cet ordre est plus lisible : la donnée avant ce qui en dépend.
 const codeFromUrl = ref<string | null>(null)
+const isInviteMode = computed(() => !!codeFromUrl.value)
 
 const {
   screen,
@@ -224,6 +250,14 @@ const {
   backToSetup
 } = useQuickdraw()
 
+// ⚠️ Dupliqué avec POINTS_BY_RANK dans backend/QuickdrawRoom.ts — sert
+// uniquement à AFFICHER le "+3/+2/+1" gagné par manche, le calcul réel
+// des scores (source de vérité) est fait côté serveur. Si le barème
+// change un jour côté backend, penser à mettre à jour cette copie aussi,
+// sinon l'affichage mentirait sur les points réellement gagnés.
+// Alternative plus robuste évoquée à la conception : faire envoyer
+// directement "pointsEarned" par le serveur dans round_result plutôt que
+// de le recalculer ici — non fait pour l'instant.
 const POINTS_BY_RANK = [3, 2, 1]
 
 function pointsForRank(index: number): number {
@@ -233,6 +267,8 @@ function pointsForRank(index: number): number {
 const pseudoInput = ref('')
 const joinCode = ref('')
 
+// Détecte un ?code=... dans l'URL au chargement (lien d'invitation) —
+// pré-remplit le code ET bascule l'écran en mode invité (isInviteMode).
 onMounted(() => {
   const fromQuery = route.query.code as string | undefined
   if (fromQuery) {
@@ -260,6 +296,7 @@ async function copyLink() {
     await navigator.clipboard.writeText(shareUrl.value)
   } catch {
     // fallback silencieux : le champ reste sélectionnable manuellement
+    // (nécessite HTTPS en prod — fonctionne en HTTP seulement sur localhost)
   }
 }
 </script>
@@ -314,6 +351,15 @@ async function copyLink() {
 .qd-input:focus {
   outline: none;
   border-color: var(--accent);
+}
+
+/* Même structure/gap que .join-form (mode normal) pour une cohérence
+   visuelle entre les deux modes de saisie. */
+.invite-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
 }
 
 .join-form {

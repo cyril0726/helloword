@@ -6,7 +6,7 @@
     </p>
 
     <template v-else>
-      <!-- SELECTION -->
+      <!-- SELECTION : choix des continents + difficulté avant de lancer le quiz -->
       <div v-if="screen === 'continents'" class="flags-screen">
         <h2 class="flags-heading">Choisis tes continents</h2>
 
@@ -22,6 +22,8 @@
           </button>
         </div>
 
+        <!-- Boutons de difficulté désactivés tant qu'aucun continent n'est
+             sélectionné (canStart) — évite de lancer un quiz sans données -->
         <div class="difficulty-list">
           <button
             v-for="level in (['facile', 'moyen', 'difficile'] as const)"
@@ -48,7 +50,7 @@
         </Transition>
       </div>
 
-      <!-- QUIZ -->
+      <!-- QUIZ : question en cours, drapeau, 4 choix -->
       <div v-else-if="screen === 'quiz'" class="flags-screen">
         <div class="flags-hud">
           <div class="hud-item">Score : {{ score }}</div>
@@ -74,6 +76,9 @@
           }"
         />
 
+        <!-- Une fois `locked` (réponse donnée), les 4 boutons deviennent
+             non cliquables et affichent visuellement la bonne réponse
+             (vert) et, si différente, la mauvaise réponse choisie (rouge) -->
         <div class="options-grid">
           <button
             v-for="opt in options"
@@ -92,7 +97,7 @@
         </div>
       </div>
 
-      <!-- END -->
+      <!-- END : récapitulatif de fin de quiz -->
       <div v-else class="flags-screen">
         <h2 class="flags-heading">Quiz terminé</h2>
 
@@ -116,6 +121,9 @@
 </template>
 
 <script setup lang="ts">
+// Toute la logique (chargement JSON, sélection, scoring, timer) vit dans
+// le composable — ce composant ne fait que de l'affichage + des handlers
+// de clic qui délèguent directement aux fonctions du composable.
 import { useFlags } from '@/composables/games/flags/useFlags'
 
 const {

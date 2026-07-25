@@ -1,6 +1,9 @@
 <template>
   <div class="tictactoe-game">
-    <!-- SETUP -->
+    <!-- SETUP : créer une partie (devient X) ou rejoindre via un code (devient O).
+         Contrairement à QuickDraw, aucun pseudo n'est demandé ici — le jeu
+         est strictement à 2 joueurs, identifiés par leur rôle (X/O), pas
+         par un nom choisi. -->
     <div v-if="screen === 'setup'" class="tictactoe-screen">
       <h2 class="tictactoe-heading">Défie un ami</h2>
 
@@ -29,7 +32,7 @@
       </Transition>
     </div>
 
-    <!-- WAITING -->
+    <!-- WAITING : partie créée, en attente qu'un second joueur rejoigne via le lien -->
     <div v-else-if="screen === 'waiting'" class="tictactoe-screen">
       <h2 class="tictactoe-heading">En attente d'un adversaire</h2>
 
@@ -45,7 +48,9 @@
       <button class="btn" @click="backToSetup">Annuler</button>
     </div>
 
-    <!-- PLAYING -->
+    <!-- PLAYING : plateau interactif, cases désactivées si déjà jouées ou
+         si ce n'est pas le tour du joueur (validation redondante avec le
+         serveur — voir tictactoe.ts backend, qui reste la source de vérité) -->
     <div v-else-if="screen === 'playing'" class="tictactoe-screen">
       <p class="tictactoe-role">
         Tu joues : <strong>{{ role }}</strong>
@@ -55,6 +60,9 @@
         {{ isMyTurn ? 'À toi de jouer' : "Tour de l'adversaire" }}
       </p>
 
+      <!-- Cases = <button>, accessibles nativement au clavier (Enter/Espace)
+           sans configuration supplémentaire — même choix que RouterLink sur
+           LabCard.vue, éviter de réinventer l'accessibilité sur un <div>. -->
       <div class="board">
         <button
           v-for="(cell, i) in board"
@@ -73,7 +81,8 @@
       </Transition>
     </div>
 
-    <!-- FINISHED -->
+    <!-- FINISHED : plateau figé (lecture seule, <div> et non <button> —
+         plus aucune interaction possible) + résultat + actions de fin -->
     <div v-else class="tictactoe-screen">
       <h2 class="tictactoe-heading">{{ resultLabel }}</h2>
 
@@ -100,6 +109,9 @@
 import { ref } from 'vue'
 import { useTictactoe } from '@/composables/games/tictactoe/useTictactoe'
 
+// Logique de session (create/join, reconnexion éventuelle via ?code= dans
+// l'URL, polling de l'état de la partie) entièrement dans le composable —
+// voir useTictactoe.ts pour le détail du cycle de vie de la partie.
 const {
   screen,
   code,
@@ -134,6 +146,7 @@ async function copyLink() {
     await navigator.clipboard.writeText(shareUrl.value)
   } catch {
     // silencieux : le champ reste sélectionnable manuellement en fallback
+    // (nécessite HTTPS en prod — fonctionne en HTTP seulement sur localhost)
   }
 }
 </script>

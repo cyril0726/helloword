@@ -1,16 +1,22 @@
 import { Hono } from "hono";
 
+// Contrairement à quickdraw.ts, pas de Durable Object ici : TicTacToe est
+// un jeu tour par tour, la latence du polling HTTP (côté client, ~1.5s)
+// est largement suffisante — pas besoin de temps réel WebSocket.
 type Env = {
   DB: D1Database;
 };
 
 type Board = string[]; // 9 cases, "" | "X" | "O"
 
+// Reflète exactement les colonnes de la table tictactoe_sessions (snake_case,
+// tel que D1/SQLite les retourne). Converti en camelCase pour le frontend
+// via serializeRow() plus bas — l'API ne renvoie jamais ce type brut.
 interface TictactoeRow {
   code: string;
-  board: string;
+  board: string; // stocké en JSON stringifié (SQLite n'a pas de type array natif)
   current_player: "X" | "O";
-  player_x_joined: number;
+  player_x_joined: number; // 0 ou 1 (SQLite n'a pas de vrai booléen)
   player_o_joined: number;
   status: "waiting" | "playing" | "finished";
   winner: string | null;
@@ -19,6 +25,8 @@ interface TictactoeRow {
 const tictactoe = new Hono<{ Bindings: Env }>();
 
 // Caractères sans ambiguïté visuelle (pas de 0/O, 1/I)
+// Identique à quickdraw.ts — dupliqué plutôt que partagé pour l'instant,
+// candidat à extraire dans un utilitaire commun lors du nettoyage général.
 const CODE_CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
 function generateCode(length = 6): string {
@@ -29,12 +37,18 @@ function generateCode(length = 6): string {
   return code;
 }
 
+// Index du plateau (0 à 8), disposés ainsi :
+//   0 | 1 | 2
+//   3 | 4 | 5
+//   6 | 7 | 8
 const WIN_LINES = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8], // lignes
   [0, 3, 6], [1, 4, 7], [2, 5, 8], // colonnes
   [0, 4, 8], [2, 4, 6]             // diagonales
 ];
 
+// Renvoie "X"/"O" si une ligne est complète, "draw" si le plateau est plein
+// sans vainqueur, ou null si la partie continue.
 function checkWinner(board: Board): "X" | "O" | "draw" | null {
   for (const [a, b, c] of WIN_LINES) {
     if (board[a] && board[a] === board[b] && board[a] === board[c]) {
@@ -45,6 +59,10 @@ function checkWinner(board: Board): "X" | "O" | "draw" | null {
   return null;
 }
 
+// Traduit une ligne SQL brute (snake_case, board en string JSON, booléens
+// en 0/1) vers la forme que consomme le frontend (camelCase, board en vrai
+// tableau, booléens JS réels). Point de passage unique pour cette
+// conversion — si le format API doit changer un jour, c'est ici seulement.
 function serializeRow(row: TictactoeRow) {
   return {
     code: row.code,
@@ -58,10 +76,15 @@ function serializeRow(row: TictactoeRow) {
 }
 
 // POST /api/tictactoe/create
+// Le créateur devient toujours "X" et démarre en "waiting" (en attente
+// qu'un second joueur rejoigne via /join, qui deviendra "O").
 tictactoe.post("/create", async (c) => {
   let code = generateCode();
 
-  // évite (rare) une collision de code déjà existant
+  // Évite (rare) une collision de code déjà existant.
+  // Ici la vérification passe par une requête D1 classique — contrairement
+  // à quickdraw.ts qui, sans base de données, doit interroger directement
+  // le Durable Object via une méthode RPC pour le même besoin.
   for (let attempts = 0; attempts < 5; attempts++) {
     const existing = await c.env.DB
       .prepare("SELECT code FROM tictactoe_sessions WHERE code = ?")
@@ -82,6 +105,8 @@ tictactoe.post("/create", async (c) => {
 });
 
 // POST /api/tictactoe/:code/join
+// Le second joueur à rejoindre devient systématiquement "O" et fait
+// passer la partie en "playing". Refuse si la place O est déjà prise.
 tictactoe.post("/:code/join", async (c) => {
   const code = c.req.param("code").toUpperCase();
 
@@ -109,6 +134,8 @@ tictactoe.post("/:code/join", async (c) => {
 });
 
 // GET /api/tictactoe/:code
+// Endpoint interrogé en polling par le frontend (~1.5s) pour connaître
+// l'état à jour de la partie — plateau, tour, victoire éventuelle.
 tictactoe.get("/:code", async (c) => {
   const code = c.req.param("code").toUpperCase();
 
@@ -125,6 +152,19 @@ tictactoe.get("/:code", async (c) => {
 });
 
 // POST /api/tictactoe/:code/move  { index, player }
+// Valide et applique un coup. Toute la logique de jeu (tour valide, case
+// libre, calcul du vainqueur) est faite ici, côté serveur — jamais fait
+// confiance au client, qui pourrait sinon forcer un coup illégal.
+//
+// ⚠️ Point de vigilance (non bloquant à l'échelle actuelle du projet) :
+// la séquence lire-modifier-écrire ci-dessous (SELECT puis UPDATE) n'est
+// pas atomique. Si, de façon très improbable, deux requêtes /move arrivaient
+// à quelques millisecondes d'intervalle pour la même partie, les deux
+// pourraient lire le même état avant qu'aucune n'écrive, menant à un coup
+// perdu ou incohérent. Risque quasi nul en pratique ici (un coup par joueur,
+// à tour de rôle, avec un temps de réflexion humain entre chaque), mais à
+// garder en tête si ce pattern est réutilisé pour un jeu à cadence plus
+// rapide — une transaction D1 ou un verrou applicatif serait alors requis.
 tictactoe.post("/:code/move", async (c) => {
   const code = c.req.param("code").toUpperCase();
   const body = await c.req.json<{ index: number; player: "X" | "O" }>();
@@ -172,6 +212,9 @@ tictactoe.post("/:code/move", async (c) => {
 });
 
 // POST /api/tictactoe/:code/rematch
+// Réinitialise uniquement le plateau et le tour — garde la même session
+// (même code, mêmes joueurs déjà connectés en X/O) plutôt que d'en créer
+// une nouvelle, pour que les deux joueurs restent sur le même lien partagé.
 tictactoe.post("/:code/rematch", async (c) => {
   const code = c.req.param("code").toUpperCase();
 

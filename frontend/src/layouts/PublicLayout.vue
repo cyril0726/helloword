@@ -2,12 +2,12 @@
   <div class="public-layout">
     <Navbar />
 
+    <!-- Reçoit le contenu de page (déjà enveloppé dans sa Transition)
+         depuis App.vue, comme GameLayout.vue et DashboardLayout.vue —
+         un seul mécanisme de routage/transition pour tout le site,
+         plus de <RouterView> ni de <Transition> dupliqués ici. -->
     <main class="content">
-      <RouterView v-slot="{ Component }">
-        <Transition name="page" mode="out-in">
-          <component :is="Component" />
-        </Transition>
-      </RouterView>
+      <slot />
     </main>
 
     <Footer />
@@ -15,13 +15,11 @@
 </template>
 
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
 import Navbar from '@/components/layout/Navbar.vue'
 import Footer from '@/components/layout/Footer.vue'
 </script>
 
-
-<style>
+<style scoped>
 .public-layout {
   min-height: 100vh;
   display: flex;

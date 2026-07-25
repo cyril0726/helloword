@@ -1,9 +1,24 @@
 <!doctype html>
-<html lang="en">
+<!-- 🐛 CORRIGÉ : lang="en" alors que tout le contenu du site est en
+     français — impact réel sur l'accessibilité (lecteurs d'écran
+     appliquant des règles de prononciation anglaises à du texte
+     français) et sur les navigateurs proposant une traduction erronée
+     ("traduire depuis l'anglais"). -->
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <!-- ⚠️ Probablement encore le favicon par défaut du scaffold Vite,
+         pas le sceau CG — cohérent avec la Roadmap qui liste "Favicon
+         décliné du sceau CG" comme non fait. Non corrigé ici (nécessite
+         de générer le SVG du sceau en favicon), juste signalé. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- ⚠️ Titre statique, jamais synchronisé avec route.meta.title
+         (qui existe pourtant et contient un vrai titre par jeu : Pendu,
+         QuickDraw...). L'onglet du navigateur affiche toujours
+         "CraftGuild" peu importe la page visitée. À corriger via un
+         watch sur la route dans App.vue si souhaité (document.title =
+         route.meta.title ?? 'CraftGuild'). -->
     <title>CraftGuild</title>
   </head>
   <body>

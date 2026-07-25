@@ -33,8 +33,21 @@ async function test() {
     const res = await fetch(`${API}/api/health`);
     const data = await res.json();
 
-    status.value = "ok";
-    message.value = data.message ?? "API OK";
+    // 🐛 CORRIGÉ : deux bugs liés.
+    // 1. `data.message` n'existe pas sur /api/health (ce champ n'existe
+    //    que sur la route racine "/") — le fallback "API OK" s'affichait
+    //    donc systématiquement, jamais de vraie donnée dynamique.
+    // 2. status passait à "ok" sans vérifier data.db — si la DB était en
+    //    panne (backend renvoie alors un 500, mais fetch() ne throw pas
+    //    sur un statut HTTP non-2xx, seulement sur un échec réseau total),
+    //    ce composant affichait quand même "ok" en vert. Incohérent avec
+    //    TopStatusBar.vue, qui vérifie bien api ET db.
+    const dbOk = data.db === "ok";
+
+    status.value = dbOk ? "ok" : "error";
+    message.value = dbOk
+      ? `DB ok · ${data.latencyMs}ms`
+      : `DB en erreur · ${data.latencyMs}ms`;
   } catch {
     status.value = "error";
     message.value = "API unreachable";
@@ -45,17 +58,19 @@ async function test() {
 </script>
 
 <style scoped>
+/* 🐛 CORRIGÉ : couleurs codées en dur, converties aux tokens (même
+   famille de correction que Sidebar.vue / Topbar.vue / TopStatusBar.vue). */
 .card {
-  background: #0f172a;
-  border: 1px solid #1f2937;
-  border-radius: 10px;
-  padding: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
 
-  color: #e5e7eb;
+  color: var(--text);
 
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-1);
 }
 
 .row {
@@ -63,15 +78,15 @@ async function test() {
   justify-content: space-between;
 }
 
-.ok { color: #22c55e; }
-.error { color: #ef4444; }
+.ok { color: var(--status-live); }
+.error { color: var(--danger); }
 
 button {
-  padding: 6px 8px;
-  border-radius: 6px;
+  padding: 6px var(--space-2);
+  border-radius: var(--radius-sm);
   border: none;
-  background: #1d4ed8;
-  color: white;
+  background: var(--accent);
+  color: #fff;
   cursor: pointer;
   font-size: 12px;
 }

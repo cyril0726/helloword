@@ -1,6 +1,6 @@
 <template>
   <div class="tables-game">
-    <!-- MENU -->
+    <!-- MENU : sélection des tables à réviser + choix du mode -->
     <div v-if="screen === 'menu'" class="tables-screen">
       <h2 class="tables-heading">Quelles tables veux-tu tester ?</h2>
 
@@ -16,6 +16,9 @@
         </button>
       </div>
 
+      <!-- Deux modes distincts, gérés entièrement par le composable :
+           chrono = 60s, le plus de bonnes réponses possible ;
+           zen = nombre de questions fixe (maxQuestions), sans pression -->
       <div class="mode-buttons">
         <button
           class="btn btn--primary"
@@ -38,11 +41,13 @@
       </Transition>
     </div>
 
-    <!-- GAME -->
+    <!-- GAME : question en cours + HUD adapté au mode -->
     <div v-else-if="screen === 'game'" class="tables-screen">
       <div class="tables-hud">
         <div class="hud-item">Score : {{ score }}</div>
         <div class="hud-item">Erreurs : {{ errors }}</div>
+        <!-- HUD différent selon le mode : progression (zen) vs
+             compte à rebours (chrono) — jamais les deux en même temps -->
         <div v-if="mode === 'zen'" class="hud-item">
           {{ questionsAsked }}/{{ maxQuestions }}
         </div>
@@ -75,11 +80,14 @@
       </Transition>
     </div>
 
-    <!-- END -->
+    <!-- END : récapitulatif, contenu variable selon le mode joué -->
     <div v-else class="tables-screen">
       <h2 class="tables-heading">Partie terminée</h2>
 
       <div class="tables-result">
+        <!-- Le score n'a pas la même forme selon le mode : "X/questions"
+             en zen (dénominateur fixe connu), "X" seul en chrono (le
+             nombre de questions posées varie selon la vitesse du joueur) -->
         <p v-if="mode === 'zen'">⭐ Score : {{ score }} / {{ questionsAsked }}</p>
         <p v-else>⭐ Score : {{ score }}</p>
 
@@ -99,6 +107,9 @@
 import { ref, nextTick, watch } from 'vue'
 import { useTables } from '@/composables/games/tables/useTables'
 
+// Toute la logique (chrono, zen, calcul du score/précision/rang) vit
+// dans le composable — ce composant ne fait que de l'affichage +
+// la gestion du focus de l'input (voir watch ci-dessous).
 const {
   screen,
   mode,
@@ -129,7 +140,10 @@ function submitAnswer() {
   nextTick(() => inputRef.value?.focus())
 }
 
-// refocus l'input à chaque nouvelle question
+// Refocus l'input à chaque nouvelle question générée par le composable
+// (current change de valeur) — couvre le cas où le focus serait perdu
+// entre deux questions sans passer par submitAnswer (ex: première
+// question au lancement de la partie).
 watch(current, () => {
   nextTick(() => inputRef.value?.focus())
 })
@@ -216,6 +230,13 @@ watch(current, () => {
   text-align: center;
 }
 
+/* Note : contrairement à Hangman (--danger appliqué seulement à partir
+   d'un seuil, erreurs >= 4), ici le timer chrono est TOUJOURS en couleur
+   danger dès le début de la manche — traitement volontairement différent
+   (signale l'urgence du mode chrono en continu, pas seulement en fin de
+   temps). Pas un bug, juste un choix de design distinct entre les deux
+   jeux, à garder en tête si on veut harmoniser ce genre de signal plus
+   tard dans le nettoyage. */
 .hud-item--timer {
   color: var(--danger);
   border-color: var(--danger);

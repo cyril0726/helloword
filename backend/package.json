@@ -10,9 +10,7 @@
     "cf-typegen": "wrangler types",
 
     "db:dev": "wrangler d1 migrations apply DB --local",
-    "db:prod": "wrangler d1 migrations apply DB --remote",
-    "migrate:dev": "wrangler d1 migrations apply DB --local",
-    "migrate:prod": "wrangler d1 migrations apply DB --remote"
+    "db:prod": "wrangler d1 migrations apply DB --remote"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.12.4",

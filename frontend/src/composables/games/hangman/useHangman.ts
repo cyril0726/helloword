@@ -35,6 +35,14 @@ const MOTS = [
 
 const MAX_ERREURS = 6
 
+// ⚠️ Contrairement à useTables/useFlags/useQuickdraw (qui nettoient leurs
+// timers via onBeforeUnmount), aucun des setTimeout ci-dessous (shake,
+// message, redémarrage auto après victoire/défaite) n'est annulé si le
+// composant est démonté avant leur exécution. Impact limité en pratique
+// (aucun crash, juste initialiserJeu() qui pourrait s'exécuter inutilement
+// sur un état que plus personne ne lit si le joueur quitte la page dans
+// la fenêtre de 1,2-1,5s après une victoire/défaite) — mais incohérent
+// avec la discipline appliquée ailleurs. Non corrigé pour l'instant.
 export function useHangman() {
   const motATrouver = ref('')
   const lettresUtilisees = ref<string[]>([])
@@ -60,6 +68,9 @@ export function useHangman() {
 
   const aPerdu = computed(() => erreurs.value >= MAX_ERREURS)
 
+  // N'exclut pas le mot précédent — un même mot peut retomber deux fois
+  // de suite après une victoire/défaite (comportement identique à
+  // l'original avant portage, non changé volontairement).
   function choisirMot() {
     return MOTS[Math.floor(Math.random() * MOTS.length)]
   }

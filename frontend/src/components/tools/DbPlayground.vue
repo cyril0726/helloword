@@ -9,8 +9,6 @@
         placeholder="write message..."
         @keyup.enter="send"
       />
-
-
     </div>
 
     <!-- ACTIONS -->
@@ -44,6 +42,11 @@ const text = ref("");
 const messages = ref<any[]>([]);
 const loading = ref(false);
 
+// ⚠️ Pas de try/catch sur load()/send()/reset() — un échec réseau se
+// traduit par une erreur silencieuse en console (unhandled rejection),
+// sans retour visible à l'utilisateur. Acceptable en l'état pour un
+// outil de debug interne à usage personnel, mais à muscler (comme
+// DbCard.vue l'a été) si cet outil devient plus qu'un panneau de test.
 async function load() {
   const res = await fetch(`${API}/api/messages`);
   messages.value = await res.json();
@@ -83,27 +86,28 @@ onMounted(load);
 </script>
 
 <style scoped>
+/* Police monospace volontaire ici (contrairement au reste du site en
+   sans-serif) — cohérent avec la règle typographique du projet : le
+   mono est réservé aux zones techniques ponctuelles (voir
+   /docs/Architecture.md), et un panneau "DB TOOL" en est exactement
+   un cas d'usage légitime, pas une entorse à la charte. */
 .panel {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 6px;
+  padding: var(--space-2);
   font-family: monospace;
   font-size: 12px;
-  color: #e5e7eb;
-  background: #0f172a;
-  border: 1px solid #1f2937;
-  border-radius: 6px;
-}
-
-.title {
-  opacity: 0.7;
+  color: var(--text);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
 }
 
 .section-title {
   font-weight: 600;
   opacity: 0.7;
-  margin-top: 6px;
+  margin-top: var(--space-2);
 }
 
 .row {
@@ -116,9 +120,9 @@ input {
   padding: 3px 6px;
   font-size: 12px;
 
-  background: #0b1220;
-  border: 1px solid #1f2937;
-  color: white;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
 }
 
 .actions {
@@ -130,19 +134,19 @@ button {
   padding: 2px 6px;
   font-size: 11px;
 
-  background: #111827;
-  border: 1px solid #1f2937;
-  color: #e5e7eb;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
   cursor: pointer;
 }
 
 button:hover {
-  background: #1f2937;
+  background: var(--border);
 }
 
 .danger {
-  border-color: #7f1d1d;
-  color: #fca5a5;
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 .meta {
